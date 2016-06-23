@@ -1,0 +1,113 @@
+<!-- $Id: Marks.htm,v 1.14.4.1 2005/05/04 04:42:05 cxh Exp $ -->
+<html>
+<head>
+<title>Marks</title>
+</head>
+<body bgcolor="#faf0e6">
+<h1>Plot data read from a URL</h1>
+
+The plot below obtains its data from a
+<a href="plotmlSample.txt">data file</a> at a URL.
+The file format is PlotML, based on the popular internet language XML,
+<i>extensible markup language</i>.
+
+<p>
+<!-- The HTML below is for the Java Plugin.
+	The first section is for IE,
+	the second is for Netscape Communicator
+ -->
+
+<!-- HTML CONVERTER -->
+<SCRIPT LANGUAGE="JavaScript"><!--
+    var _info = navigator.userAgent; 
+    var _ns = false; 
+    var _ns6 = false;
+    var _ie = (_info.indexOf("MSIE") > 0 && _info.indexOf("Win") > 0 && _info.indexOf("Windows 3.1") < 0);
+//--></SCRIPT>
+    <COMMENT>
+        <SCRIPT LANGUAGE="JavaScript1.1"><!--
+        var _ns6 = (_info.indexOf("Mozilla/5") >= 0);
+        var _ns = (navigator.appName.indexOf("Netscape") >= 0 && ((_info.indexOf("Win") > 0     && _info.indexOf("Win16") < 0 && java.lang.System.getProperty("os.version").indexOf("3.5") < 0) || (_info.indexOf("Sun") > 0) || (_info.indexOf("Linux") > 0) || (_info.indexOf("AIX") > 0) || (_info.indexOf("OS/2") > 0) || (_info.indexOf("IRIX") > 0 )));
+//--></SCRIPT>
+    </COMMENT>
+
+<SCRIPT LANGUAGE="JavaScript"><!--
+    if (_ie == true) document.writeln('\
+        <OBJECT \
+            classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93" \
+            width = "600" \
+            height = "400"  \
+            codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_4_2-windows-i586.cab#Version=1,4,2"> \
+            <PARAM NAME = "code" \
+                   VALUE = "ptolemy.plot.plotml.PlotMLApplet" > \
+	    <PARAM NAME = "codebase"   VALUE = "../../.." > \
+	    <PARAM NAME = "archive" \
+                   VALUE = "ptolemy/plot/plotmlapplet.jar" > \
+            <PARAM NAME = "type" \
+                   VALUE = "application/x-java-applet;version=1.4.2" > \
+            <PARAM NAME = "scriptable" VALUE = "false" > \
+            <PARAM NAME = "progressbar" VALUE = "true"> \
+            <PARAM NAME = "background" VALUE = "#faf0e6" > \
+	    <PARAM NAME = "dataurl" VALUE = "plotmlSample.txt" > \
+            No Java Plug-in support for applet, see <a href="http://java.sun.com/products/plugin/"><code>http://java.sun.com/products/plugin/</code></a> \
+        </OBJECT> \
+        ');
+    else if (_ns == true || _ns6 == true)
+         document.writeln('\
+        <COMMENT> \
+          <EMBED \
+            type = "application/x-java-applet;version=1.4.2" \
+            code = "ptolemy.plot.plotml.PlotMLApplet" \
+            codebase = "../../.." \
+            archive = "ptolemy/plot/plotmlapplet.jar" \
+            width = "600" \
+            height = "400" \
+            progressbar = "true" \
+            background = "#faf0e6" dataurl = "plotmlSample.txt"  \
+            scriptable = "false" \
+            pluginspage = "http://java.sun.com/j2se/1.4.2/download.html"> \
+              <NOEMBED> \
+              No Java Plug-in support for applet, see <a href="http://java.sun.com/products/plugin/"><code>http://java.sun.com/products/plugin/</code></a> \
+              </NOEMBED> \
+           </EMBED> \
+        <COMMENT> \
+        ');
+    else document.writeln('\
+        <APPLET \
+            code = "ptolemy.plot.plotml.PlotMLApplet" \
+            codebase = "../../.." \
+            archive = "ptolemy/plot/plotmlapplet.jar" \
+            width = "600" \
+            height = "400" \
+            > \
+            <PARAM NAME = "progressbar" VALUE = "true"> \
+            <PARAM NAME = "background" VALUE = "#faf0e6" > \
+	    <PARAM NAME = "dataurl" VALUE = "plotmlSample.txt" > \
+            No Java Plug-in support for applet, see <a href="http://java.sun.com/products/plugin/"><code>http://java.sun.com/products/plugin/</code></a> \
+        </APPLET> \
+        ');
+//--></SCRIPT>
+<!-- /HTML CONVERTER -->
+
+<p>
+This plot shows certain features of the plotter. Note that color is
+disabled, and individual marks are used for the first ten data sets.
+After that, the marks are recycled, so the eleventh data set is
+indistinguishable from the first. (Had we used color, we would be able
+to distinguish up to 110 distinct datasets). Also note that the first two
+data sets are connected with lines, but the remaining data sets are
+not. The ranges for the horizontal and vertical axes are computed
+automatically from the data, but the tick marks for the horizontal axis
+are specified explicitly in the PlotML file. This is why they appear as
+words rather than numbers. Note further that each axis and each data
+set is labeled by a string given in the PlotML file. For details about
+the PlotML file format, see the
+<a href="../doc/plot.pdf" target="_top">Plot Chapter</a>.
+
+<p>Note that because of a bug in Java 1.4.0_01, this applet may fail
+if it is being viewed on a local file system, see
+<a href="../doc/troubleshooting.htm#spaces">AccessControlException caused by spaces in path name</a></h2> for details.
+
+<p>&nbsp;
+</body>
+</html>

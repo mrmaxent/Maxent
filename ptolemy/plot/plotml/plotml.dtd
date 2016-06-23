@@ -1,0 +1,86 @@
+<!-- PlotML DTD. Author: Edward A. Lee -->
+<!-- Version: $Id: plotml.dtd,v 1.6 2004/04/13 19:19:49 cxh Exp $ -->
+<!ELEMENT plot (
+	barGraph |
+	bin |
+	dataset |
+	default |
+	noColor |
+	noGrid |
+	size |
+	title |
+	wrap |
+	xLabel |
+	xLog |
+	xRange |
+	xTicks |
+	yLabel |
+	yLog |
+	yRange |
+	yTicks)*>
+
+  <!ELEMENT barGraph EMPTY>
+    <!-- NOTE: If only one of these is specified, then the other is ignored. -->
+    <!ATTLIST barGraph width CDATA #IMPLIED
+                       offset CDATA #IMPLIED>
+  <!ELEMENT bin EMPTY>
+    <!-- NOTE: If only one of these is specified, then the other is ignored. -->
+    <!ATTLIST bin width CDATA #IMPLIED
+                  offset CDATA #IMPLIED>
+  <!ELEMENT dataset (m | move | p | point)*>
+    <!ATTLIST dataset connected (yes | no) #IMPLIED
+                      marks (none | dots | points | various | pixels) #IMPLIED
+                      name CDATA #IMPLIED
+                      stems (yes | no) #IMPLIED>
+  <!ELEMENT default EMPTY>
+    <!ATTLIST default connected (yes | no) "yes"
+                      marks (none | dots | points | various | pixels) "none"
+                      stems (yes | no) "no">
+  <!ELEMENT noColor EMPTY>
+  <!ELEMENT noGrid EMPTY>
+  <!ELEMENT reuseDatasets EMPTY>
+  <!ELEMENT size EMPTY>
+    <!ATTLIST size height CDATA #REQUIRED
+                   width CDATA #REQUIRED>
+  <!ELEMENT title (#PCDATA)>
+  <!ELEMENT wrap EMPTY>
+  <!ELEMENT xLabel (#PCDATA)>
+  <!ELEMENT xLog EMPTY>
+  <!ELEMENT xRange EMPTY>
+    <!ATTLIST xRange min CDATA #REQUIRED
+                     max CDATA #REQUIRED>
+  <!ELEMENT xTicks (tick)+>
+  <!ELEMENT yLabel (#PCDATA)>
+  <!ELEMENT yLog EMPTY>
+  <!ELEMENT yRange EMPTY>
+    <!ATTLIST yRange min CDATA #REQUIRED
+                     max CDATA #REQUIRED>
+  <!ELEMENT yTicks (tick)+>
+
+    <!ELEMENT tick EMPTY>
+      <!ATTLIST tick label CDATA #REQUIRED
+                     position CDATA #REQUIRED>
+
+    <!ELEMENT m EMPTY>
+      <!ATTLIST m x CDATA #IMPLIED
+                  y CDATA #REQUIRED
+                  lowErrorBar CDATA #IMPLIED
+                  highErrorBar CDATA #IMPLIED>
+
+    <!ELEMENT move EMPTY>
+      <!ATTLIST move x CDATA #IMPLIED
+                     y CDATA #REQUIRED
+                     lowErrorBar CDATA #IMPLIED
+                     highErrorBar CDATA #IMPLIED>
+
+    <!ELEMENT p EMPTY>
+      <!ATTLIST p x CDATA #IMPLIED
+                  y CDATA #REQUIRED
+                  lowErrorBar CDATA #IMPLIED
+                  highErrorBar CDATA #IMPLIED>
+
+    <!ELEMENT point EMPTY>
+      <!ATTLIST point x CDATA #IMPLIED
+                      y CDATA #REQUIRED
+                      lowErrorBar CDATA #IMPLIED
+                      highErrorBar CDATA #IMPLIED>

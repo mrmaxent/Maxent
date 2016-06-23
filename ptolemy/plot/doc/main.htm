@@ -1,0 +1,164 @@
+<!-- $Id: main.htm,v 1.22.2.1 2005/07/28 17:19:36 cxh Exp $ -->
+<html>
+<head>
+<Title>Ptplot 5.5 - Java Plotter</Title>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<link href="default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1><a name="plot classes">Ptplot 5.5 - Java Plotter</a></h1>
+<table>
+<tr>
+
+<td><img alt="Screenshot of PtPlot applet plotting a FourierSeries" width=507 height=315 src="img/ptplot.gif">
+
+<td align=center>
+<b>Authors</b><br>
+<i>Edward A. Lee</i>
+<br>
+<i>Christopher Brooks</i> <p>
+<b>Contributors</b>
+<br>
+<i>Lukito Muliadi</i>
+<br>
+<i>William Wu</i>
+<br>
+<i>Jun Wu</i>
+</table>
+
+Ptplot is a set of two dimensional signal plotters components
+written in Java with the following properties:
+<ul>
+<li> Embeddable in applets or applications.
+<li> Auto-ranging.
+<li> Automatic or manual labeling of axes.
+<li> Automatic or manual tick marks.
+<li> Logarithmic axes.
+<li> Live, animated plots.
+<li> Infinite zooming.
+<li> Various plot styles: connected lines, scatter plot, bars, etc.
+<li> Various point styles: none, dots, points, and unique marks.
+<li> Multiple data sets and a legend.
+<li> Color or black and white plotting.
+<li> Error bars.
+<li> Editable plots.
+<li> PlotML, and XML language for specifying plots.
+<li> Compatibility with pxgraph, an older plotting program.
+</ul>
+
+<p>
+There is a set of
+<a href="../demo/toc.htm" target="contents">demonstrations</a>
+of the various capabilities.
+There are several ways to use the classes in the plot package.
+<ul>
+<li> You can invoke an executable, <i>ptplot</i>, which is a shell script,
+     to plot data on the local file system or on the network.
+<li> You can invoke an executable, <i>pxgraph</i>, which is a shell script,
+     to plot data that is stored in binary format compatible with the
+     older program pxgraph.
+<li> You can invoke a Java application, such as PlotMLApplication,
+     by setting your CLASSPATH variable appropriately and using the
+     <code>java</code> executable that is included in your Java
+     distribution.
+<li> You can reference an existing applet class, such as PlotMLApplet,
+     in an HTML file.  The
+     applet parameters, such as <i>dataurl</i>, give the plot
+     data and format information, either by referring to another
+     file on the network, or by directly including the information.
+     You do not even have to have Ptplot installed on your server,
+     since you can always reference the Berkeley installation.
+<li> You can create new classes derived from applet, frame, or
+     application classes to customize your plots.  This allows you
+     to completely control the placement of plots on the screen,
+     and to write Java code that defines the data to be plotted.
+</ul>
+<p>
+The plot data can be specified in any of three data formats:
+<ul>
+<li> PlotML is an XML extension for plot data.  Its syntax is similar
+     to that of HTML.
+<li> An older, simpler syntax for plot data is also provided, although
+     in the long term, that syntax is unlikely to be maintained (it will
+     not necessarily be expanded to include new features). For simple
+     data plots, however, it is adequate.  Using it for applets has the
+     advantage of making it possible to reference a slightly smaller
+     jar file containing the code, which makes for more responsive applets.
+<li> A binary file format used by the popular pxgraph program, an
+     extension of xgraph, is supported by classes in the <i>compat</i>
+     package. There is also a shell script, called <i>pxgraph</i>, which
+     invokes these classes. Formatting information in pxgraph
+     (and in the compat package) is provided by command-line arguments,
+     rather than being included with the plot data, exactly as in the
+     older program.  Applets specify these command-line arguments
+     as an applet parameter.
+</ul>
+
+The main class implementing the plotter component is
+<a href="../../../doc/codeDoc/ptolemy/plot/Plot.html">Plot</a>.
+It is derived from
+<a href="../../../doc/codeDoc/ptolemy/plot/PlotBox.html">PlotBox</a>,
+which provides only the axes and
+decorations of the plot.  This is implemented in a base class so that
+it can be reused for different kinds of plots.  Live (animated) data
+plots are supported by the
+<a href="../../../doc/codeDoc/ptolemy/plot/PlotLive.html">PlotLive</a> class.
+This class is abstract; a derived class must be created to generate
+the data to plot (or collect it from some other application).
+Editable plots (where a user can interactively modify the data being
+plotted) are supported by the
+<a href="../../../doc/codeDoc/ptolemy/plot/EditablePlot.html">EditablePlot</a>
+class.
+<p>
+The above classes define panels that are used by placing them
+into a user interface context such as an applet or the top-level window
+of an application.  A number of classes are provided to support common
+situations, but you should keep in mind that these classes are by
+no means comprehensive.  Many interesting uses of the plot package
+involve writing Java code to create customized user interfaces
+that include one or more plots.
+The most commonly used built-in classes are those in the plotml
+package, which can read PlotML files and the older textual syntax.
+These classes are include:
+<ul>
+  <li> PlotMLApplet: A simple applet that can read PlotML files off the web and
+    render them.
+  <li>EditablePlotMLApplet: A version that allows editing of any data set in the
+    plot.
+  <li>PlotMLFrame: A top-level window containing a plot defined by a PlotML file.
+  <li>PlotMLApplication: An application that can be invoked from the command line
+    and reads PlotML files.
+  <li>EditablePlotMLApplication: An extension that allows editing of any data
+    set in the plot.
+</ul>
+
+
+<p>The last of these is the class invoked by the <i>ptplot</i> command-line script.
+  It can open plot files, edit them, print them, and save them. There are simpler
+  version of some of these in the <i>plot</i> package that cannot read PlotML
+  files, but can read an older, simpler syntax. The only reason to use these simpler
+  versions is for the slightly smaller jar file sizes, which can improve the responsivity
+  of applets.
+<p><a href="../demo/TwoPlotExample.java">TwoPlotExample</a> is a very simple sample
+  Ptplot application that uses only core classes in the <i>plot</i> package, and
+  exercises complete control over the layout of the page.
+<p>Backward compatibility with the C <CODE>pxgraph</CODE> program is provided
+  in the compat package by the <a href="../compat/PxgraphApplet.java">PxgraphApplet</a>
+  and <a href="../compat/PxgraphApplication.java">PxgraphApplication</a> classes
+  in the <i>compat</i> package.
+<P><A NAME="xgraph">This</A> code owes a heavy debt to David
+Harrison, the original author of <CODE>xgraph</CODE>, which runs under
+the X window system on Unix platforms.  An extension to
+<CODE>xgraph</CODE> called <CODE>pxgraph</CODE>, written by Joe Buck,
+reads binary files as well as ASCII.  For compatibility with these
+programs, we have provided a Bourne Shell script called
+<CODE>pxgraph</CODE> that is a drop-in replacement for either
+<CODE>xgraph</CODE> or <CODE>pxgraph</CODE>.  Unlike the original
+program, however, the Java implementation does not depend on the X
+window system.  We have provided a DOS batch file called
+<CODE>pxgraph.bat</CODE> that brings <CODE>pxgraph</CODE> capability
+to Windows platforms.
+
+<p><font size="2" color="#cc0000">Last Updated: $Date: 2005/07/28 17:19:36 $</font>
+</body>
+</html>

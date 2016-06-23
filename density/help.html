@@ -1,0 +1,590 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Help for maxent</title>
+</head>
+<body bgcolor="WHITE">
+<blockquote>
+  <h2>MaxEnt</h2>
+  A program for maximum entropy modelling of species geographic distributions,
+  written by Steven Phillips, Miro Dudik and Rob Schapire, with support from 
+  AT&amp;T Labs-Research, Princeton University, and the Center for Biodiversity and 
+  Conservation, American Museum of Natural History.&nbsp; Thank you to
+  the authors of the following free software packages which we have
+  used here: ptolemy/plot, gui/layouts, gnu/getopt and
+  com/mindprod/ledatastream.   
+</span>
+  <p>This page contains reference information for the MaxEnt program.&nbsp; Background information on the method can be found in the following 
+  two papers:</p>
+  <p class="MsoNormal">&nbsp;&nbsp;
+  <a href="http://www.research.att.com/~phillips" style="color: blue; text-decoration: underline; text-underline: single">
+  Steven J. Phillips</a>,
+  <a href="http://web.sci.ccny.cuny.edu/~anderson" style="color: blue; text-decoration: underline; text-underline: single">
+  Robert P. Anderson</a>,
+  <a href="http://www.cs.princeton.edu/~schapire" style="color: blue; text-decoration: underline; text-underline: single">
+  Robert E. Schapire</a>. <br>
+  &nbsp;&nbsp; <strong>Maximum entropy modeling of species geographic distributions</strong>.
+  <br>
+  &nbsp;&nbsp; <cite>Ecological Modelling</cite>, Vol 190/3-4 pp 231-259, 2006.</p>
+  <p class="MsoNormal">&nbsp;&nbsp;
+  <a href="http://www.research.att.com/~phillips" style="color: blue; text-decoration: underline; text-underline: single">
+  Steven J. Phillips</a>, <a href="http://wwww.cs.princeton.edu/~mdudik">
+  Miroslav Dudik</a>. <br>
+  &nbsp;&nbsp; <strong>Modeling of species distributions
+with Maxent: new extensions and a comprehensive evaluation</strong>.
+  <br>
+  &nbsp;&nbsp; <cite>Ecography</cite>, Vol 31 pp 161-175, 2008.</p>
+
+
+  <p>The model for a species is determined from a set of environmental or
+climate layers (or "coverages") for a set of grid cells in a landscape,
+together with a set of sample locations where the species has been
+observed.&nbsp; The model expresses the suitability of each grid cell
+as a function of the environmental variables at that grid cell.&nbsp; A
+high value of the function at a particular grid cell indicates that the
+grid cell is predicted to have suitable conditions for that
+species.&nbsp; The computed model is a probability distribution over
+all the grid cells.&nbsp; The distribution chosen is the one that has
+maximum entropy subject to some constraints: it must have the same
+expectation for each feature (derived from the environmental layers) as
+the average over sample locations. <br>
+  </p>
+  <h3>Inputs, Outputs and Parameters</h3>
+Input files, output directory and algorithm parameters can be specified
+through the user interface, or on a command line.&nbsp; The user interface is best for doing single
+runs, while the command line is useful for repeated runs or automatically performing a
+sequence of runs with variations in the set of inputs.&nbsp;
+
+<h4>
+Inputs:
+</h4>
+  <ul>
+    <li><b>Samples.&nbsp; </b>Given by a file in comma-separated value
+format.&nbsp; The first line is a header line, while later lines have
+the format: species, longitude, latitude.&nbsp; For example
+      <pre>  Species, Long, Lat<br>  Blue-headed Vireo, -89.9, 48.6<br>  Loggerhead Shrike, -87.15, 34.95<br>  ...</pre>
+Any number of species can be represented in the same file.&nbsp;
+Individual species can be selected or deselected before starting a run,
+and only selected species will be modeled.</li>
+    <li><b>Environmental layers.&nbsp; </b>Given by a directory
+containing the layers.&nbsp; The layers must either be in ESRI ASCII
+grid format (described below), with filenames ending in ".asc", or
+Diva-GIS
+grid format, with filenames ending in ".grd" and ".gri".&nbsp; By
+default,
+all layers in the directory are used in the modeling, but individual
+layers
+can be deselected before starting a run.&nbsp; Each layer can be
+continuous
+(having real or integer values) or categorical (having a small number
+of
+discrete values).  The environmental layers can also be given in a SWD
+format file as described next.</li>
+    <li><b>SWD (samples-with-data)
+format.&nbsp; </b>You can give the samples values for the
+environmental variables directly in the .csv file, as in the following
+example: 
+      <pre>  Species, X, Y, Var1, Var2, Var3
+<br>  Blue-headed Vireo, 310186, 8243704, 1, 19.5, 0.91
+<br>  Blue-headed Vireo, 300243, 8173341, 2, 18.3, 1.04
+<br>  Loggerhead Shrike, 290434, 8192276, 4, 20.7, 0.88
+</pre>
+This file is then used as the sample file. &nbsp;The value -9999 is
+interpreted as NODATA, and should be used if some samples are lacking
+data for some of the environmental variables.  &nbsp;  The "X" and "Y"
+fields are for geographic coordinates, though they are not used by the  
+MaxEnt program if all environmental data is given in the SWD format
+file. &nbsp;  In a similar way, a 
+set of background points can also be given 
+environmental data, using the same format, for example:
+      <pre>  Species, X, Y, Var1, Var2, Var3
+<br>  background, 320268, 8428840, 1, 17.5, 0.55
+<br>  background, 301886, 8432739, 2, 18.1, 0.65
+</pre>
+The SWD format file with background data is then used in place of the
+environmental layers directory.  For background data, 
+the &quot;Species&quot; column 
+    is ignored (we've used &quot;background&quot for clarity only), as are any lines containing NODATA values.&nbsp; &nbsp;&nbsp;The two formats can be mixed: samples can be specified in SWD 
+    format, with background data given in grids. &nbsp;  However, if
+    background data is given in SWD format, then the samples must be
+    too. &nbsp; </li>
+    <li><b>Projection directory.</b>&nbsp; An optional directory
+    (or SWD format file) containing a second set of environmental layers.&nbsp; The layers must
+have the same names as those in the "Environmental layers" directory,
+though they might describe a different geographic area.&nbsp; The
+projection process is
+described below.</li>
+</ul>
+
+<h4>
+Algorithm Parameters:
+</h4>
+<ul>
+    <li><b>Feature types.</b>&nbsp; The environmental layers are used
+to produce "features", which constrain the probability distribution
+that is being computed.&nbsp; The available feature types are linear,
+quadratic, product, threshold and discrete.&nbsp; Using "auto features"
+allows the
+set of features used to depend on the number of presence records for
+the
+species being modeled, using general empirically-derived rules. </li>
+    <ul>
+      <li>Linear features constrain the output distribution for each
+species to have the same expectation of each of the continuous
+environmental variables as the sample locations for that species.&nbsp;
+A linear feature is simply one of the continuous environmental
+variables. </li>
+      <li>Quadratic features (when used together with linear features)
+constrain the output distribution to have the same expectation and
+variance of the environmental variables as the samples.&nbsp; A
+quadratic feature is the square of one of the continuous environmental
+variables. </li>
+      <li>A product feature is the product of two continuous
+environmental variables; when used with linear and quadratic features,
+product features constrain the output distributions to have the same
+covariance for each pair of environmental variables as the samples. </li>
+      <li>A threshold feature is derived from a continuous
+environmental variable.&nbsp; For a threshold value <i>v</i>, the
+threshold feature&nbsp;<i></i>is binary (taking values 0 and 1) and is
+1 when the variable has value greater than <i>v</i>.&nbsp; The effect
+of a threshold feature is to make the total probability of grid cells
+with a value greater than the threshold be equal to the fraction of
+sample locations with the value above the threshold.</li>
+      <li>A hinge feature is also derived from a continuous environmental 
+      varaible.&nbsp; It is like a linear feature, but it is constant below a 
+      threshold <i>v.</i></li>
+      <li>Discrete features are automatically made for each selected
+categorical variable.&nbsp; One feature is made for each possible value
+of each categorical variable: the feature for a value <i>v </i>is
+binary (taking values 0 and 1) and is 1 when the variable has value <i>v</i>.&nbsp;
+The effect of a discrete feature is to make the total probability of
+grid cells with a particular value of the categorical variable be equal
+to the fraction of sample locations with that value.</li>
+    </ul>
+    <li><b>Control parameters.</b>&nbsp; There are a number of control
+    parameters available, either on the main interface or the
+    "Settings" panel.  A tooltip (little text description) appears if
+    you point the mouse at a control parameter, describing its effect.
+</ul>
+
+<h4>
+Outputs:
+</h4>
+All output files are written in the <i>output directory</i>.
+    The summary of a maxent run is given in
+    <ul>
+      <li><i>maxentResults.csv</i><br>
+        listing the number of training samples used for learning, values of
+training
+      gain and test gain and AUC.&nbsp; Test gain and AUC are given only when a 
+      test sample file is provided or when a specified percentage of the samples 
+      is set aside for testing.&nbsp; If a jackknife is performed, the 
+      regularized training gain and (optionally) test gain and AUC for each part 
+      of the jackknife are included here.<li><i>maxent.log</i><br>
+    records the parameters and options chosen for the run, and some
+        details of the run that are useful for troubleshooting.    
+    </ul>
+In addition, maxent produces several files for every species. For a
+species called <i>mySpecies</i>, it produces files
+    <ul>
+    <li><i>mySpecies.html</i>
+    <br>the main output file, containing statistical 
+    analyses, plots, pictures of the model, and links to other files.&nbsp; It 
+    also documents parameter and control settings that were used to do the run.<li><i>mySpecies.asc</i> (or <i>mySpecies.grd</i>)<br>
+    containing the probabilities in ESRI ASCII
+grid format (or in DIVA-Gis format if -H switch
+is used)
+    <li><i>mySpecies.lambdas</i>
+    <br>containing the computed values of
+    the constants <i>c1, c2,</i>&nbsp;...&nbsp;(described below)
+    <li><i>mySpecies.png</i>
+    <br>is a picture of the prediction<li><i>
+    mySpecies_omission.csv</i><br>describing the predicted area and training and 
+    (optionally) test omission for various raw and cumulative thresholds<li>
+    various plots for jackknifing and response curves, in the <i>plots</i> 
+    subdirectory.</ul>
+The <i>output
+format</i> for predicted distributions is either <i>raw,</i>,
+<i>logistic</i> (the default) or <i>cumulative</i>.   For raw output,
+the output values are probabilities (between 0 and 1) such that the
+sum over all cells used during training is 1.  Typical values are
+therefore extremely small.  For logistic output, the values 
+are again probabilities (between 0 or 1), but scaled up in a
+non-linear way for easier
+interpretation.  If typical 
+presences used during training are from environmental conditions where
+probability of 
+presence is around 0.5, 
+then the logistic output can be interpreted as predicted probability
+of presence (otherwise they can be interpreted as relative suitability).
+  If <i>p(x)</i> is the raw
+output for environmental conditions <i>x</i>, the corresponding
+logistic value is <i>c p(x) / (1 + c p(x))</i> for a particular value
+of <i>c</i> (namely, the exponential of the entropy of the raw
+distribution).  For the cumulative output format, the value at a grid
+cell is the sum of the probabilities of 
+all
+grid cells with no higher probability than the grid cell, times
+100.&nbsp;
+For example, the grid cell that is predicted as having the best
+conditions
+for the species, according to the model, will have cumulative value
+100,
+while cumulative values close to 0 indicate predictions of unsuitable
+conditions.
+  <br>
+  <h3>ESRI ASCII Grid Format</h3>
+  <p>(Copied from the ArcWorkstation 8.3 Help File) </p>
+  <p> The ASCII file must consist of header information containing a
+set of
+keywords, followed by cell values in row-major order. The file format
+is </p>
+  <pre>  &lt;NCOLS xxx&gt;<br>  &lt;NROWS xxx&gt;<br>  &lt;XLLCENTER xxx | XLLCORNER xxx&gt;<br>  &lt;YLLCENTER xxx | YLLCORNER xxx&gt;<br>  &lt;CELLSIZE xxx&gt;<br>  {NODATA_VALUE xxx}<br>  row 1<br>  row 2<br>  ...<br>  row n<br></pre>
+where <tt>xxx</tt> is a number, and the keyword <tt>nodata_value</tt>
+is optional and defaults to -9999. Row 1 of the data is at the top of
+the grid, row 2 is just under row 1 and so on. For example:
+  <pre>  ncols         386<br>  nrows         286<br>  xllcorner     -128.66338<br>  yllcorner     13.7502065<br>  cellsize      0.2<br>  NODATA_value  -9999<br>  -9999 -9999 -123 -123 -123 -9999 -9999 -9999 -9999 -9999 ...<br>  -9999 -9999 -123 -123 -123 -9999 -9999 -9999 -9999 -9999 ...<br>  -9999 -9999 -117 -117 -117 -119 -119 -119 -119 -119 -9999 ...<br>  ...<br></pre>
+The <tt>nodata_value</tt> is the value in the ASCII file to be
+assigned to those cells whose true value is unknown. Cell values should
+be delimited by spaces. No carriage returns are necessary at the end of
+each row in
+the grid. The number of columns in the header is used to determine when
+a new row begins. The number of cell values must be equal to the number
+of rows times the number of columns.
+  <p> <font color="red"><i>The current implementation of maxent
+requires fields </i><tt>xllcorner</tt><i>, </i><tt>yllcorner</tt><i>
+and </i><tt>nodata_value</tt><i>.</i></font> </p>
+<br>
+  <h3>How it works</h3>
+  This is a very brief description -- for more details, please see the papers 
+  described above.&nbsp; Here we first describe an unregularized version (with the regularization
+value set to zero); in practice, we always recommend to use
+regularization.
+Without regularization, the distribution being computed is the one that
+has maximum entropy among those satisfying the constraints that the
+expectation
+of each feature matches its empirical average.&nbsp; This distribution
+can
+be proved to be the same as the Gibbs distribution that maximizes the
+product
+of the probabilities of the sample locations, where a Gibbs
+distribution
+takes the form <br>
+  <br>
+  <i>&nbsp;&nbsp; P</i>(<i>x</i>) = exp(<i>c1</i> * <i>f1</i>(<i>x</i>)
++ <i>c2</i> * <i>f2</i>(<i>x</i>) + <i>c3</i> * <i>f3</i>(<i>x</i>)
+...) / <i>Z</i><br>
+  <br>
+Here <i>c1</i>, <i>c2</i>, ... are constants, <i>f1</i>, <i>f2</i>,
+... are the features, and <i>Z</i> is a scaling constant that ensures
+that <i>P</i> sums to 1 over all grid cells.&nbsp; The algorithm that
+is implemented by this program is guaranteed to converge to values of <i>c1,
+c2,</i>&nbsp;..., that give the (unique) optimum distribution <i>P</i>.<br>
+  <br>
+For each species, the program starts with a uniform distribution, and
+performs a number of iterations, each of which increases the
+probability of the sample locations for the species.&nbsp; The
+probability is displayed in terms of "gain", which is the log of the
+number of grid cells minus the log loss (average of
+the negative log probabilities of the sample locations).&nbsp; The gain
+starts at zero (the gain of the uniform distribution), and increases
+as the program increases the probabilities of the sample
+locations.&nbsp;  The gain
+increases iteration by iteration, until the change from one iteration
+to the next falls below the <i>convergence threshold</i>, or until <i>maximum
+iterations</i> have been performed.<br>
+  <br>
+In the regularized case, the gain is lower by an additional term, which is
+the weighted sum of the absolute values of <i>c1</i>, <i>c2</i>,&nbsp;...&nbsp;.&nbsp;
+This limits overfitting and prevents <i>c1</i>, <i>c2</i>,&nbsp;...&nbsp;
+from becoming arbitrarily large. Minimizing the regularized loss (or
+equivalently, maximizing the regularized gain)
+corresponds to maximizing the entropy of the distribution subject to a
+relaxed constraint that feature expectations be only close to feature
+averages over sample locations rather than exactly equal to them.
+  <p>&nbsp;</p>
+  <h3>Regularization and feature class selection</h3>
+  <p>The predictive performance of the MaxEnt is influenced by the choice of 
+  feature types and the regularization constants.&nbsp; Here we describe the 
+  default settings, which can be overridden, if desired, using the command line 
+  flags described below.&nbsp;  By default (i.e., when using
+  &quot;Auto features&quot;), all feature types are used when 
+  there are at least 80 training samples;&nbsp; from 15 to 79 samples, linear, 
+  quadratic and hinge features are used;&nbsp; from 10 to 14 samples, linear and 
+  quadratic features are used;&nbsp; below 10 samples, only linear features are 
+  used.</p>
+  <p>The default values for the constants c1, c2 described above is an
+  empirically tuned 
+  value (called &quot;beta&quot;, and depending on the feature type and the number of 
+  samples) divided by the square root of the number of samples.&nbsp; The 
+  default values for beta for the various feature types are given in
+  the following tables, with interpolation in between:</p>
+
+<br>Linear (2-9 samples)
+
+<table border="1" cellpadding="2" cellspacing="2">
+<tr><td> Sample size </td><td> 0 </td><td> 10 </td><td> 30 </td><td> 100+ </td></tr>
+<tr><td> Beta </td><td> 1.0 </td><td> 1.0 </td><td> 0.2 </td><td> 0.05 </td></tr>
+</table>
+
+<br>Linear + Quadratic (10-79 samples)
+
+<table border="1" cellpadding="2" cellspacing="2">
+<tr><td> Sample size </td><td> 0 </td><td> 10 </td><td> 17 </td><td> 30 </td><td> 100+ </td></tr>
+<tr><td> Beta </td><td> 1.3 </td><td> 0.8 </td><td> 0.5 </td><td> 0.25 </td><td> 0.05 </td></tr>
+</table>
+
+<br>Linear + Quadratic + Product (80+ samples)
+
+<table border="1" cellpadding="2" cellspacing="2">
+<tr><td> Sample size </td><td> 0 </td><td> 10 </td><td> 17 </td><td> 30 </td><td> 100+ </td></tr>
+<tr><td> Beta </td><td> 2.6 </td><td> 1.6 </td><td> 0.9 </td><td> 0.55 </td><td> 0.05 </td></tr>
+</table>
+
+<br>Threshold (80+ samples)
+
+<table border="1" cellpadding="2" cellspacing="2">
+<tr><td> Sample size </td><td> 0 </td><td> 100+ </td></tr>
+<tr><td> Beta </td><td> 2.0 </td><td> 1.0 </td></tr>
+</table>
+
+<br>Hinge (15+ samples)
+
+<table border="1" cellpadding="2" cellspacing="2">
+<tr><td> Sample size </td><td> 0+ </td></tr>
+<tr><td> Beta </td><td> 0.5 </td></tr>
+</table>
+
+<br>Categorical (15+ samples)
+
+<table border="1" cellpadding="2" cellspacing="2">
+<tr><td> Sample size </td><td> 0+ </td><td> 10 </td><td> 17+ </td></tr>
+<tr><td> Beta </td><td> 0.65 </td><td> 0.5 </td><td> 0.25 </td></tr>
+</table>
+
+<br>
+
+  <h3>Projections</h3>
+The values of <i>c1</i>, <i>c2</i>,&nbsp;... and <i>Z</i> that were
+computed for features derived from the "Environmental layers" are used
+to compute weights using the layers in the "Projection
+directory".&nbsp;
+Note that these weights are not probabilities and they need not sum to
+one
+since they use the normalization constant computed for "Environmental
+layers" rather than the one for "Projection directory". Their relative
+magnitudes represent how much a given locale is favored by the species
+over another locale. For each species, the weights are written in a
+file <i>mySpecies_&lt;dir&gt;.asc</i> in the output directory, where
+&lt;dir&gt; is the name of the projection directory.&nbsp; By default,
+two kinds of "clamping" are done during the projection process.&nbsp;
+First, the environmental layers are clamped: if a layer in
+the projection directory has values that are greater than the maximum
+of the corresponding layer used during training, those values are
+reduced to the maximum, and similarly for values below the
+corresponding minimum.&nbsp; Second, features are also clamped: if a
+feature derived from the projection layers has value greater
+than its maximum on the training data, it is reduced to the maximum, and
+similarly for values below the corresponding minimum.
+Both forms of clamping help to alleviate problems that can arise from
+making predictions outside the range of data used in training the
+model.
+  <br>
+  <h3>Background Points</h3>
+As described above, the maxent distribution is calculated over the set
+of pixels that have data for all environmental variables.
+&nbsp;However,
+if the number of pixels is very large, processing time increases
+without
+a significant improvement in modeling performance. &nbsp;For that
+reason,
+when the number of pixels with data is larger than 10,000 a random
+sample
+of 10,000 "background" pixels is used to represent the variety of
+environmental
+conditions present in the data. &nbsp;The maxent distribution is then
+computed
+over the union of the "background" pixels and the samples for the
+species
+being modeled. &nbsp;The number 10,000 can be changed from the &quot;Settings&quot; panel, 
+  or by using a
+command-line
+flag: see the batch-mode section below.
+  <br>
+  <h3>Memory Issues</h3>
+If the environmental layers are very large files, you may get "out of
+memory" or "heap space" errors when you try to run the program. &nbsp;There are a
+number of ways
+to address this problem. &nbsp;<br>
+  <ul>
+    <li>First, make sure that you are clicking on the maxent.bat file, rather 
+    than the maxent.jar file.</li>
+    <li>Second, make sure that java is being given close to the maximum memory
+available on your computer. &nbsp;The maxent.bat file (or any
+command-line invocation) should begin "java -mxXXXm", where XXX is a
+little less than the
+number of megabytes of memory in your computer (e.g., use the flag
+"-mx900m" if you have a gigabyte of memory). &nbsp;It shouldn't equal
+the amount of memory in your computer, otherwise "thrashing" will
+occur as the last of the memory is consumed. &nbsp;An exception is on
+Microsoft Windows systems with multiple gigabytes of memory: Windows
+cannot give java the large contiguous block
+of memory it desires, so unfortunately you are limited to a maximum of about 1.3
+gigabytes. &nbsp;</li>
+    <li>Third, you can create SWD-format files (described above) containing the environmental
+conditions at the sample localities and a random set of background
+pixels
+(for example, using a GIS) so that the maxent program doesn't need to
+load
+the large environmental layers files. &nbsp;If you provide the input in this format, you'll probably want to
+project
+the resulting model onto your original environmental layers, so you
+should
+give their location in the "projection directory". &nbsp;The
+projection
+process is memory-efficient, as it doesn't need to hold all the
+environmental
+variables in memory at the same time.</li>
+  </ul>
+  <br>
+<h3>Format of the lambda file</h3>
+
+The coefficients of the Maxent model for a species are output in a
+  file called <i>species</i>.lambdas.  The entries in the lambdas file are
+  lines of the form: <i>feature, lambda, min, max</i>.  The exponent
+  of the Maxent model is calculated as 
+
+<br><br>
+  exponent = lambda<sub>1</sub> * (f<sub>1</sub>(x)-min<sub>1</sub>)/(max<sub>1</sub> - min<sub>1</sub>) + ... + lambda<sub>n</sub> * (f<sub>n</sub>(x)-min<sub>n</sub>)/(max<sub>n</sub> -min<sub>n</sub>) - linearPredictorNormalizer
+<br><br>
+
+In other words, features are scaled so that their values would lie
+between 0 and 1 on the training data.  By default, all features are
+clamped prior to projection of the model
+onto new data - see section "Projections" above.
+The linearPredictorNormalizer is
+a constant chosen so that the exponent is always non-positive (for
+numerical stability).
+Terms corresponding to hinge features are evaluated slightly
+differently.  For example, the hinge feature prec' derived from the
+layer prec and described by the line:  <i>prec', lambda, min, max</i>
+evaluates to the term
+
+<br><br>
+  lambda * clamp_at_0(prec-min)/(max-min)
+<br><br>
+
+i.e., if prec&lt min then the value is 0 otherwise it is (prec-min)/(max-min).
+For the reverse hinge feature
+  <i> prec`, lambda, min, max</i>,
+the term is
+
+<br><br>
+  lambda * clamp_at_0(max-prec)/(max-min)
+<br><br>
+
+The densityNormalizer is the normalization term Z calculated over the
+background.  The Maxent raw output is therefore:
+
+<br><br>
+  raw = exp(sum lambda<sub>i</sub> * (f<sub>i</sub>(x)-min<sub>i</sub>)/(max<sub>i</sub> - min<sub>i</sub>) - linearPredictorNormalizer) / densityNormalizer
+<br><br>
+
+Lastly, logistic output is calculated using the entropy given at
+the end of the lambda file:  
+
+  logistic = raw * exp(entropy) / (1 + raw * exp(entropy)).
+
+<br><br>
+<br><br>
+
+
+  <h3>Batch mode</h3>
+All parts of the interface can be set from the command line, and the
+Run button can be automatically pressed after startup.&nbsp; This
+allows for the program to be invoked in batch mode, multiple times in
+sequence, if required.&nbsp; The command line flags can also be added
+to the maxent.bat file, at the end of the "java ..." line, to change
+the default settings of the program.  Some of
+the more common flags have abbreviations that can be used instead of
+the full flag.  As an example, the following two invocations are
+equivalent:
+<br><br>
+java -mx512m -jar maxent.jar environmentallayers=layers samplesfile=samples\bradypus.csv outputdirectory=outputs togglelayertype=ecoreg redoifexists autorun
+<br><br>
+java -mx512m -jar maxent.jar -e layers -s samples\bradypus.csv -o
+outputs -t ecoreg -r -a
+<br><br>
+Any boolean flag can be given the prefix "no" or "dont" to turn the flag off.  Abbreviations for boolean flags toggle the default value.  The available flags are, in no particular order:<br><br><br>
+
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+<tr><th>Flag</th><th>Abbrv</th><th>Type</th><th>Default</th><th>Meaning</th></tr>
+<tr><td>responsecurves</td><td>P</td><td>boolean</td><td>false</td><td><html>Create graphs showing how predicted relative probability of occurrence depends on the value of each environmental variable
+<tr><td>pictures</td><td></td><td>boolean</td><td>true</td><td>Create a .png image for each output grid
+<tr><td>jackknife</td><td>J</td><td>boolean</td><td>false</td><td><html>Measure importance of each environmental variable by training with each environmental variable first omitted, then used in isolation
+<tr><td>outputformat</td><td></td><td>string</td><td>logistic</td><td>Representation of probabilities used in writing output grids.  See Help for details
+<tr><td>outputfiletype</td><td></td><td>string</td><td>asc</td><td><html>File format used for writing output grids
+<tr><td>outputdirectory</td><td>o</td><td>directory</td><td></td><td>Directory where outputs will be written.  This should be different from the environmental layers directory.
+<tr><td>projectionlayers</td><td>j</td><td>file/directory</td><td></td><td><html>Location of an alternate set of environmental variables.  Maxent models will be projected onto these variables.<br>Can be a .csv file (in SWD format) or a directory containing one file per variable.<br>Multiple projection files/directories can be separated by commas.
+<tr><td>samplesfile</td><td>s</td><td>file</td><td></td><td>Please enter the name of a file containing presence locations for one or more species.
+<tr><td>environmentallayers</td><td>e</td><td>file/directory</td><td></td><td><html>Environmental variables can be in a directory containing one file per variable, <br>or all together in a .csv file in SWD format.  Please enter a directory name or file name.
+<tr><td>randomseed</td><td></td><td>boolean</td><td>false</td><td><html>If selected, a different random seed will be used for each run, so a different random test/train partition<br>will be made and a different random subset of the background will be used, if applicable.
+<tr><td>logscale</td><td></td><td>boolean</td><td>true</td><td><html>If selected, all pictures of models will use a logarithmic scale for color-coding.
+<tr><td>warnings</td><td></td><td>boolean</td><td>true</td><td><html>Pop up windows to warn about potential problems with input data.<br>Regardless of this setting, warnings are always printed to the log file.
+<tr><td>tooltips</td><td></td><td>boolean</td><td>true</td><td>Show messages that explain various parts of the interface, like this message
+<tr><td>askoverwrite</td><td>r</td><td>boolean</td><td>true</td><td><html>If output files already exist for a species being modeled,<br>pop up a window asking whether to overwrite or skip.  Default is to overwrite.
+<tr><td>skipifexists</td><td>S</td><td>boolean</td><td>false</td><td><html>If output files already exist for a species being modeled,<br>skip the species without remaking the model.
+<tr><td>removeduplicates</td><td></td><td>boolean</td><td>true</td><td><html>Remove duplicate presence records.<br>If environmental data are in grids, duplicates are records in the same grid cell.<br>Otherwise, duplicates are records with identical coordinates.
+<tr><td>writeclampgrid</td><td></td><td>boolean</td><td>true</td><td><html>Write a grid that shows the spatial distribution of clamping.<br>At each point, the value is the absolute difference between prediction values with and without clamping.
+<tr><td>writemess</td><td></td><td>boolean</td><td>true</td><td><html>A multidimensional environmental similarity surface (MESS) shows where novel climate conditions exist in the projection layers.<br>The analysis shows both the degree of novelness and the variable that is most out of range at each point.
+<tr><td>randomtestpoints</td><td>X</td><td>integer</td><td>0</td><td><html>Percentage of presence localities to be randomly set aside as test points, used to compute AUC, omission etc.
+<tr><td>betamultiplier</td><td>b</td><td>double</td><td>1.0</td><td>Multiply all automatic regularization parameters by this number.  A higher number gives a more spread-out distribution.
+<tr><td>maximumbackground</td><td>MB</td><td>integer</td><td>10000</td><td>If the number of background points / grid cells is larger than this number, then this number of cells is chosen randomly for background points
+<tr><td>biasfile</td><td></td><td>file</td><td></td><td><html>Sampling is assumed to be biased according to the sampling distribution given in this grid file.<br>Values in this file must not be zero or negative.  MaxEnt will factor out the bias.<br>Requires environmental data to be in grids, rather than a SWD format file
+<tr><td>testsamplesfile</td><td>T</td><td>file</td><td></td><td><html>Use the presence localities in this file to compute statistics (AUC, omission etc.)<br>The file can contain different localities for different species.<br>It takes precedence over the random test percentage.
+<tr><td>replicates</td><td></td><td>integer</td><td>1</td><td>Number of replicate runs to do when cross-validating, bootstrapping or doing sampling with replacement runs
+<tr><td>replicatetype</td><td></td><td>string</td><td>crossvalidate</td><td><html>If replicates > 1, do multiple runs of this type:<br>Crossvalidate: samples divided into <i>replicates</i> folds; each fold in turn used for test data.<br>Bootstrap: replicate sample sets chosen by sampling with replacement.<br>Subsample: replicate sample sets chosen by removing <i>random test percentage</i> without replacement to be used for evaluation.
+<tr><td>perspeciesresults</td><td></td><td>boolean</td><td>false</td><td>Write separate maxentResults file for each species
+<tr><td>writebackgroundpredictions</td><td></td><td>boolean</td><td>false</td><td>Write .csv file with predictions at background points
+<tr><td>responsecurvesexponent</td><td></td><td>boolean</td><td>false</td><td>Instead of showing the logistic value for the y axis in response curves, show the exponent (a linear combination of features)
+<tr><td>linear</td><td>l</td><td>boolean</td><td>true</td><td>Allow linear features to be used
+<tr><td>quadratic</td><td>q</td><td>boolean</td><td>true</td><td>Allow quadratic features to be used
+<tr><td>product</td><td>p</td><td>boolean</td><td>true</td><td>Allow product features to be used
+<tr><td>threshold</td><td></td><td>boolean</td><td>true</td><td>Allow threshold features to be used
+<tr><td>hinge</td><td>h</td><td>boolean</td><td>true</td><td>Allow hinge features to be used
+<tr><td>addsamplestobackground</td><td>d</td><td>boolean</td><td>true</td><td>Add to the background any sample for which has a combination of environmental values that isn't already present in the background
+<tr><td>addallsamplestobackground</td><td></td><td>boolean</td><td>false</td><td>Add all samples to the background, even if they have combinations of environmental values that are already present in the background
+<tr><td>autorun</td><td>a</td><td>boolean</td><td>false</td><td>Start running as soon as the the program starts up
+<tr><td>writeplotdata</td><td></td><td>boolean</td><td>false</td><td>Write output files containing the data used to make response curves, for import into external plotting software
+<tr><td>fadebyclamping</td><td></td><td>boolean</td><td>false</td><td><html>Reduce prediction at each point in projections by the difference between<br>clamped and non-clamped output at that point
+<tr><td>extrapolate</td><td></td><td>boolean</td><td>true</td><td>Predict to regions of environmental space outside the limits encountered during training
+<tr><td>visible</td><td>z</td><td>boolean</td><td>true</td><td>Make the Maxent user interface visible
+<tr><td>autofeature</td><td>A</td><td>boolean</td><td>true</td><td>Automatically select which feature classes to use, based on number of training samples
+<tr><td>doclamp</td><td></td><td>boolean</td><td>true</td><td>Apply clamping when projecting
+<tr><td>outputgrids</td><td>x</td><td>boolean</td><td>true</td><td>Write output grids.  Turning this off when doing replicate runs causes only the summary grids (average, std deviation etc.) to be written, not those for the individual runs.
+<tr><td>plots</td><td></td><td>boolean</td><td>true</td><td>Write various plots for inclusion in .html output
+<tr><td>appendtoresultsfile</td><td></td><td>boolean</td><td>false</td><td>If false, maxentResults.csv file is reinitialized before each run
+<tr><td>maximumiterations</td><td>m</td><td>integer</td><td>500</td><td>Stop training after this many iterations of the optimization algorithm
+<tr><td>convergencethreshold</td><td>c</td><td>double</td><td>1.0E-5</td><td>Stop training when the drop in log loss per iteration drops below this number
+<tr><td>adjustsampleradius</td><td></td><td>integer</td><td>0</td><td><html>Add this number of pixels to the radius of white/purple dots for samples on pictures of predictions.<br>Negative values reduce size of dots.
+<tr><td>threads</td><td></td><td>integer</td><td>1</td><td>Number of processor threads to use.  Matching this number to the number of cores on your computer speeds up some operations, especially variable jackknifing.
+<tr><td>lq2lqptthreshold</td><td></td><td>integer</td><td>80</td><td>Number of samples at which product and threshold features start being used
+<tr><td>l2lqthreshold</td><td></td><td>integer</td><td>10</td><td>Number of samples at which quadratic features start being used
+<tr><td>hingethreshold</td><td></td><td>integer</td><td>15</td><td>Number of samples at which hinge features start being used
+<tr><td>beta_threshold</td><td></td><td>double</td><td>-1.0</td><td>Regularization parameter to be applied to all threshold features; negative value enables automatic setting
+<tr><td>beta_categorical</td><td></td><td>double</td><td>-1.0</td><td>Regularization parameter to be applied to all categorical features; negative value enables automatic setting
+<tr><td>beta_lqp</td><td></td><td>double</td><td>-1.0</td><td>Regularization parameter to be applied to all linear, quadratic and product features; negative value enables automatic setting
+<tr><td>beta_hinge</td><td></td><td>double</td><td>-1.0</td><td>Regularization parameter to be applied to all hinge features; negative value enables automatic setting
+<tr><td>logfile</td><td></td><td>string</td><td>maxent.log</td><td>File name to be used for writing debugging information about a run in output directory
+<tr><td>cache</td><td></td><td>boolean</td><td>true</td><td>Make a .mxe cached version of ascii files, for faster access
+<tr><td>defaultprevalence</td><td></td><td>double</td><td>0.5</td><td><html>Default prevalence of the species: probability of presence at ordinary occurrence points.<br>See Elith et al., Diversity and Distributions, 2011 for details.
+<tr><td>applythresholdrule</td><td></td><td>string</td><td></td><td>Apply a threshold rule, generating a binary output grid in addition to the regular prediction grid.  Use the full name of the threshold rule in Maxent's html output as the argument.  For example, 'applyThresholdRule=Fixed cumulative value 1'.
+<tr><td>togglelayertype</td><td>t</td><td>string</td><td></td><td>Toggle continuous/categorical for environmental layers whose names begin with this prefix (default: all continuous)
+<tr><td>togglespeciesselected</td><td>E</td><td>string</td><td></td><td>Toggle selection of species whose names begin with this prefix (default: all selected)
+<tr><td>togglelayerselected</td><td>N</td><td>string</td><td></td><td>Toggle selection of environmental layers whose names begin with this prefix (default: all selected)
+<tr><td>verbose</td><td>v</td><td>boolean</td><td>false</td><td>Gived detailed diagnostics for debugging
+<tr><td>allowpartialdata</td><td></td><td>boolean</td><td>false</td><td>During model training, allow use of samples that have nodata values for one or more environmental variables.
+<tr><td>prefixes</td><td></td><td>boolean</td><td>true</td><td>When toggling samples or layers selected or layer types, allow toggle string to be a prefix rather than an exact match.
+<tr><td>nodata</td><td>n</td><td>integer</td><td>-9999</td><td>Value to be interpreted as nodata values in SWD sample data
+</table>
+</blockquote><br></body></html>

@@ -1,0 +1,97 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE plot SYSTEM "../plotml/plotml.dtd">
+<!-- Ptolemy plot, version 3.1, PlotML format. -->
+
+<plot>
+<title>A Plot</title>
+<title>A Colorless Plot</title>
+<xLabel>X Axis</xLabel>
+<yLabel>Y Axis</yLabel>
+<xTicks>
+  <tick label="zero" position="0.0"/>
+  <tick label="one" position="1.0"/>
+  <tick label="two" position="2.0"/>
+  <tick label="three" position="3.0"/>
+  <tick label="four" position="4.0"/>
+  <tick label="five" position="5.0"/>
+</xTicks>
+<noGrid/>
+<noColor/>
+<default connected="no" marks="various"/>
+<dataset name="dot" connected="yes">
+<m x="0.0" y="-4.0"/>
+<p x="1.0" y="-3.0"/>
+<p x="2.0" y="-2.0"/>
+<p x="3.0" y="-1.0"/>
+<p x="4.0" y="0.0"/>
+</dataset>
+<dataset name="cross" connected="yes">
+<m x="0.0" y="-3.5"/>
+<p x="1.0" y="-2.5"/>
+<p x="2.0" y="-1.5"/>
+<p x="3.0" y="-0.5"/>
+<p x="4.0" y="0.5"/>
+</dataset>
+<dataset name="square">
+<m x="0.0" y="-3.0"/>
+<m x="1.0" y="-2.0"/>
+<m x="2.0" y="-1.0"/>
+<m x="3.0" y="0.0"/>
+<m x="4.0" y="1.0"/>
+</dataset>
+<dataset name="triangle">
+<m x="0.0" y="-2.5"/>
+<m x="1.0" y="-1.5"/>
+<m x="2.0" y="-0.5"/>
+<m x="3.0" y="0.5"/>
+<m x="4.0" y="1.5"/>
+</dataset>
+<dataset name="diamond">
+<m x="0.0" y="-2.0"/>
+<m x="1.0" y="-1.0"/>
+<m x="2.0" y="0.0"/>
+<m x="3.0" y="1.0"/>
+<m x="4.0" y="2.0"/>
+</dataset>
+<dataset name="circle">
+<m x="0.0" y="-1.5"/>
+<m x="1.0" y="-0.5"/>
+<m x="2.0" y="0.5"/>
+<m x="3.0" y="1.5"/>
+<m x="4.0" y="2.5"/>
+</dataset>
+<dataset name="plus">
+<m x="0.0" y="-1.0"/>
+<m x="1.0" y="0.0"/>
+<m x="2.0" y="1.0"/>
+<m x="3.0" y="2.0"/>
+<m x="4.0" y="3.0"/>
+</dataset>
+<dataset name="square">
+<m x="0.0" y="-0.5"/>
+<m x="1.0" y="0.5"/>
+<m x="2.0" y="1.5"/>
+<m x="3.0" y="2.5"/>
+<m x="4.0" y="3.5"/>
+</dataset>
+<dataset name="triangle">
+<m x="0.0" y="0.0"/>
+<m x="1.0" y="1.0"/>
+<m x="2.0" y="2.0"/>
+<m x="3.0" y="3.0"/>
+<m x="4.0" y="4.0"/>
+</dataset>
+<dataset name="diamond">
+<m x="0.0" y="0.5"/>
+<m x="1.0" y="1.5"/>
+<m x="2.0" y="2.5"/>
+<m x="3.0" y="3.5"/>
+<m x="4.0" y="4.5"/>
+</dataset>
+<dataset name="dot">
+<m x="0.0" y="1.0"/>
+<m x="1.0" y="2.0"/>
+<m x="2.0" y="3.0"/>
+<m x="3.0" y="4.0"/>
+</dataset>
+</plot>

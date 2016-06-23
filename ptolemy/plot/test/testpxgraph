@@ -1,0 +1,95 @@
+#! /bin/sh -x
+# Test script for Java implementation of pxgraph
+# @Author: Christopher Hylands
+# @Version: $Id: testpxgraph,v 1.14 1999/05/19 22:48:18 cxh Exp $
+
+pxgraph=../pxgraph
+if [ $# -eq 1 ]; then
+    pxgraph=$1
+fi
+
+# Create a small test file
+
+tmpfile=/tmp/testpxgraph.$$
+# Note that we don't have a DataSets starting the file, and
+# that we use tabs, spaces and commas to separate the values
+cat > $tmpfile <<EOF
+0  0
+1	1
+2,2
+3 -0.2
+EOF
+
+tmpfile2=/tmp/testpxgraph2.$$
+# Note that we don't have a DataSets starting the file, and
+# that we use tabs, spaces and commas to separate the values
+cat > $tmpfile2 <<EOF
+0 1
+     1 2
+move:2 2.5
+3 1
+EOF
+
+# Test out two file invocations and dataset labeling
+$pxgraph -test -0 '' -binary ../demo/data/bin.plt
+$pxgraph -test $tmpfile $tmpfile2
+$pxgraph -test -0 "first data set" -1 "second data set" $tmpfile $tmpfile2
+$pxgraph -test -0 "first data set" $tmpfile $tmpfile2
+$pxgraph -test -1 "second data set" $tmpfile $tmpfile2
+$pxgraph -test -2 "second data set" $tmpfile $tmpfile2
+$pxgraph -test -0 "zero" -binary ../demo/data/bin.plt
+
+
+$pxgraph -test -bar -0 "first data set" -1 "second data set" $tmpfile $tmpfile2
+
+# Test out Flags in order
+$pxgraph -test $tmpfile
+$pxgraph -test -bar $tmpfile
+$pxgraph -test -bb $tmpfile
+$pxgraph -test -binary ../demo/data/bin.plt
+$pxgraph -test -bar -binary ../demo/data/bin.plt
+$pxgraph -test -db $tmpfile
+$pxgraph -help $tmpfile
+$pxgraph -test -lnx $tmpfile
+$pxgraph -test -lny $tmpfile
+$pxgraph -test -m $tmpfile
+$pxgraph -test -M $tmpfile
+$pxgraph -test -nl $tmpfile
+$pxgraph -test -p $tmpfile
+$pxgraph -test -p -nl $tmpfile
+$pxgraph -test -P $tmpfile
+$pxgraph -test -P -nl -binary ../demo/data/bin.plt
+$pxgraph -test -P -nl $tmpfile
+$pxgraph -test -rv $tmpfile
+$pxgraph -test -tk $tmpfile
+$pxgraph -test -v $tmpfile
+
+# Test out Options in order
+$pxgraph -test -bd blue $tmpfile
+$pxgraph -test -bg red $tmpfile
+$pxgraph -test -brb 1.0 -bar $tmpfile
+$pxgraph -test -brw 0.8 -bar $tmpfile
+$pxgraph -test -fg green $tmpfile
+$pxgraph -test -gw 10 $tmpfile
+$pxgraph -test -lf helvetica-ITALIC-20 $tmpfile
+$pxgraph -test -lx 0.5,1.5 $tmpfile
+$pxgraph -test -ly 0.5,1.5 $tmpfile
+$pxgraph -test -lx 0.5,1.5 -ly 0.5,1.5 $tmpfile
+$pxgraph -test -t "This is the Title" $tmpfile
+$pxgraph -test -tf Courier-BOLD-16 $tmpfile
+$pxgraph -test -tf Courier-BOLD-16 -t "This is another title" $tmpfile
+$pxgraph -test -x Years -y "$ Profit" $tmpfile
+$pxgraph -test -zg Yellow $tmpfile
+$pxgraph -test -zw 5 $tmpfile
+rm -f $tmpfile $tmpfile2
+
+# Test out stdin
+$pxgraph -test < ../demo/data.plt
+
+# Test out file args
+$pxgraph -test ../demo/bargraph.plt
+$pxgraph -test http://ptolemy.eecs.berkeley.edu/java/ptplot/demo/data.plt
+
+# Sample run from Ptolemy
+$pxgraph -test -binary -t "Integrator Demo" -P -x n =800x400+0+0 -1 control -0 final demo/data/integrator1.plt demo/data/integrator2.plt
+

@@ -1,0 +1,208 @@
+<!-- $Id: troubleshooting.htm,v 1.12 2002/07/10 15:53:56 cxh Exp $-->
+<html>
+<head>
+<title>Troubleshooting Ptplot</title>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<link href="default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1><a name="ptplot troubleshooting ">Troubleshooting Ptplot</a></h1>
+<p>
+Other sources of information:
+<MENU>
+<LI> <A HREF="ptplotfaq.htm">Ptplot Frequently Asked Questions (FAQ)</A>
+</MENU>
+
+Below is a list of common Ptplot problems.
+
+<h2><a name="spaces">AccessControlException caused by spaces in path name</a></h2>
+Under Java 1.4.0_01, applets that have spaces in the path name may
+fail if the applet tries to download a data file.  
+For example, the <a href="../demo/Marks.htm">Marks demo</a> 
+tries to access a data file
+
+For example,
+<code>file:///C:/tmp/ptplot/ptolemy/plot/demo/Marks.htm</code>
+works fine
+
+But doing
+<pre>
+cd c:/tmp
+mv ptplot pt\ plot
+</pre>
+
+and then going to
+<code>file:///C:/tmp/pt plot/ptolemy/plot/demo/Marks.htm</code>
+
+results in
+<pre>
+java.security.AccessControlException: access denied (java.io.FilePermission C:\tmp\ptplot 52\ptolemy\plot\demo\plotmlSample.txt read)
+	at java.security.AccessControlContext.checkPermission(AccessControlContext.java:270)
+	at java.security.AccessController.checkPermission(AccessController.java:401)
+	at java.lang.SecurityManager.checkPermission(SecurityManager.java:542)
+	at java.lang.SecurityManager.checkRead(SecurityManager.java:887)
+	at java.io.File.isDirectory(File.java:698)
+	at sun.net.www.protocol.file.FileURLConnection.connect(FileURLConnection.java:65)
+	at sun.net.www.protocol.file.FileURLConnection.getInputStream(FileURLConnection.java:148)
+	at java.net.URL.openStream(URL.java:955)
+	at ptolemy.plot.PlotApplet.init(PlotApplet.java:133)
+	at sun.applet.AppletPanel.run(AppletPanel.java:341)
+	at java.lang.Thread.run(Thread.java:536)
+</pre>
+This is a known bug, see:
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4697178.html">http://developer.java.sun.com/developer/bugParade/bugs/4697178.html</a>
+
+which says:
+<blockquote>
+<br>CUSTOMER WORKAROUND :
+<br>A couple of workarounds found:
+<p>o Don't package the files into a JAR. Problem does not
+appear to occur when just .class files are available.
+
+<p>o Change directory of installed applet to one without
+spaces in the name.
+
+<p>o Access the HTML file using an HTTP URL. Problem only
+occurs when file is accessed via a file URL.
+
+<p>o Use policytool to modify the java security file, giving
+permission to the file being read (was suggested by another
+user here with the problem; did not confirm myself).
+
+<p>xxxxx@xxxxx 2002-06-11
+<br>This is due to the special charactor for space. When we add the permission for
+the file to read, we still use "%20" instead of the real " " for the path,
+which cause the applet don't have the permission to read the file.
+
+<br>Solution: In src/share/classes/sun/applet/AppletClassLoader.java
+ 
+call ParseUtil.decode(path) method before add the permission.
+</blockquote>
+
+<p>Unfortunately, this bug means that if we ship a prebuilt version of ptplot
+or Ptolemy II and the user tries to access the applets from the local
+partition, then there will be errors.
+
+<p>The only applets that fail are applets that are on a local file system, 
+accessed with file://, that have spaces in the path and the applet
+needs to access a data file that is local.
+
+<p>This bug is not present in Java 1.3.1_03 and 1.4.1-beta.
+
+
+<H2><A NAME="Problems Starting Ptplot">Problems starting ptplot or
+running applets</A></H2>
+
+<H3><A NAME="CLASSPATH">Security violation</A></H3>
+ <P>
+One known problem is that if you have a
+CLASSPATH environment set when you started your browser, you may get
+an error message when accessing some of the demos.
+We suggest unsetting this environment variable, restarting your
+browser (and sending email to Sun's Java team to complain about the
+way the CLASSPATH environment variable works).
+You may also want to check the
+<a href="http://metalab.unc.edu/javafaq/javafaq.html">Java FAQ</a>.
+<p>
+If you have CLASSPATH set, and you run Netscape, then you might see
+messages like:
+<PRE>
+Applet Marks can't start: security violation: security.class
+from local disk trying to access url:
+http://ptolemy.eecs.berkeley.edu/java/ptolemy/plot/demo/data.plt
+</PRE>
+The
+CLASSPATH variable is by far and above the trickiest thing to get right.
+
+<H3>Script fails with: Exception in thread "main" java.lang.NoClassDefFoundError: ptolemy/plot/plotml/EditablePlotMLApplication</H3>
+Here is an example
+<PRE>
+bash-2.02$ ./ptplot
+./ptplot: Could not find '/tmp/ptolemy/plot'.  Perhaps your PTII
+ variable is not set properly?
+Exception in thread "main" java.lang.NoClassDefFoundError: ptolemy/plot/plotml/EditablePlotMLApplication
+</PRE>
+
+The problem here is that the pxgraph script cannot find the ptplot
+installation.  This probably means that your PTII environment variable
+is not set correctly.  Set it to point to the home directory
+of the plot or Ptolemy II distribution.
+ <P>
+To debug such a situation completely,
+use <CODE>which</CODE> (on Unix) or <code>type</code> (on Windows with Cygwin)
+to find out which ptplot
+script is running, and the run it with the <CODE>sh -x</CODE> flag:
+First we run <CODE>which</CODE>:
+<PRE>
+bash-2.02$ type ptplot
+ptplot is /users/cxh/ptII/bin/ptplot
+</PRE>
+The we use <CODE>sh -x</CODE>.  Note that the output you see might be
+different, depending on what version of the <CODE>pxgraph</CODE> script
+you are running.
+<PRE>
+bash-2.02$ sh -x /users/cxh/ptII/bin/ptplot
++ PTII_DEFAULT=/users/cxh/ptII_old
++ PTJAVA_DIR=/jdk1.2.2
++ '[' -z '' ']'
++ '[' -d /users/cxh/ptII_old ']'
++ PTII=/users/cxh/ptII_old
++ export PTII
++ '[' '!' -d /users/cxh/ptII_old/ptolemy/plot ']'
++ echo '/users/cxh/ptII/bin/ptplot: Could not find '\''/users/cxh/ptII_old/ptole
+my/plot'\''.  Perhaps your PTII'
+/users/cxh/ptII/bin/ptplot: Could not find '/users/cxh/ptII_old/ptolemy/plot'.
+Perhaps your PTII
++ echo ' variable is not set properly?'
+ variable is not set properly?
+++ basename /users/cxh/ptII/bin/ptplot
++ '[' ptplot = pxgraph ']'
+++ basename /users/cxh/ptII/bin/ptplot
++ '[' ptplot = histogram ']'
++ javastartupclass=ptolemy.plot.plotml.EditablePlotMLApplication
++ windows=no
++ windows=yes
++ '[' -z '' ']'
++ '[' -d /jdk1.2.2 ']'
++ JAVAHOME=/jdk1.2.2
++ export JAVAHOME
++ '[' -z /jdk1.2.2 ']'
++ '[' -z /jdk1.2.2 ']'
++ '[' yes = yes ']'
+++ cd /users/cxh/ptII_old
+++ cmd /c chdir
+++ tr -d '\r'
++ WINPTII=D:\users\cxh\ptII_old
++ /jdk1.2.2/bin/java -classpath 'D:\users\cxh\ptII_old;/jdk1.2.2\lib\classes.zip' ptolemy.plot.plotml.EditablePlotMLApplication
+Exception in thread "main" java.lang.NoClassDefFoundError: ptolemy/plot/plotml/E
+ditablePlotMLApplication
+bash-2.02$
+</PRE>
+
+In the output below, the key line is the line towards that bottom that
+runs the <CODE>java</CODE> interpreter:
+<PRE>
++ /jdk1.2.2/bin/java -classpath 'D:\users\cxh\ptII_old;/jdk1.2.2\lib\classes.zip' ptolemy.plot.plotml.EditablePlotMLApplication
+</PRE>
+In the ptplot script, the first element in the <CODE>-classpath</CODE>
+argument should be a pathname that leads to the top of the Ptolemy II
+or Ptplot directory tree.
+
+<p>In this case, there are two problems, one is that <code>$PTII</code>
+is not set, so the script is using the value of <code>PTII_DEFAULT</code>
+which was hardwired into the script when <code>configure</code> was run.
+Unfortunately, the <code>ptplot</code> script
+was left over from an old installation, and at the top
+of the script PTII_DEFAULT was set to <CODE>/users/cxh/ptII_old</CODE>
+is an empty directory that does not contain a Ptolemy II tree.
+
+<p> The fix is to rerun <code>configure</code>  and
+<code>make install</code> so that the <code>ptplot</code> script
+is properly set up.
+
+ <P>Another common fix is to edit the <CODE>pxgraph</CODE> script
+and change the variables at the top to point to the proper location.
+
+<p><font size="2" color="#cc0000">Last Updated: $Date: 2002/07/10 15:53:56 $</font>
+</body>
+</html>

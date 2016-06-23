@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- href is needed so that web start can cache the app and
+it will appear in the desktop icon
+-->
+<jnlp codebase="@PTII_URL@"
+      href="@PTII_URL@/ptolemy/plot/ptplot.jnlp"> 
+	<information>
+	  <title>Ptplot</title>
+	  <vendor>Ptolemy Project, UC Berkeley</vendor>
+	  <description">Signal Plotter</description>
+	  <description kind="tooltip">Signal Plotter</description>
+	  <icon href="ptplot32.gif"/>
+	  <homepage href="http://ptolemy.eecs.berkeley.edu/java/ptplot"/>
+	  <offline-allowed/>
+	</information>
+  <resources>
+    <j2se version="1.2+"/>
+    <jar href="ptolemy/plot/plotml/plotml.jar"/>
+    <jar href="ptolemy/plot/plotapplication.jar"/>
+  </resources>
+  <application-desc main-class="ptolemy.plot.plotml.EditablePlotMLApplication"/>
+</jnlp>

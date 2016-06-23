@@ -1,0 +1,262 @@
+<!-- $Id: Histogram.htm,v 1.16.4.1 2005/05/04 04:41:59 cxh Exp $ -->
+<html>
+<head>
+<title>Histogram</title>
+</head>
+<body bgcolor="#faf0e6">
+<h1>Histogram</h1>
+
+<p>
+A somewhat more specialized class is
+<a href="../../../doc/codeDoc/ptolemy/plot/Histogram.html">Histogram</a>
+and its support classes
+<a href="../../../doc/codeDoc/ptolemy/plot/HistogramApplet.html">
+HistogramApplet</a>,
+<a href="../../../doc/codeDoc/ptolemy/plot/plotml/HistogramMLApplet.html">
+HistogramMLApplet</a>, and
+<a href="../../../doc/codeDoc/ptolemy/plot/plotml/HistogramMLApplication.html">
+HistogramMLApplication</a>.
+The Histogram class is not just a plotter.  It actually calculates
+the histogram from raw data.  Data can be provided by Java code
+(by extending any of the support classes above), by a PlotML file,
+or by an ASCII file in a simple format described below.
+Here is an example of a histogram:
+<p>
+
+<!-- The HTML below is for the Java Plugin.
+	The first section is for IE,
+	the second is for Netscape Communicator
+ -->
+
+<!-- HTML CONVERTER -->
+<SCRIPT LANGUAGE="JavaScript"><!--
+    var _info = navigator.userAgent; 
+    var _ns = false; 
+    var _ns6 = false;
+    var _ie = (_info.indexOf("MSIE") > 0 && _info.indexOf("Win") > 0 && _info.indexOf("Windows 3.1") < 0);
+//--></SCRIPT>
+    <COMMENT>
+        <SCRIPT LANGUAGE="JavaScript1.1"><!--
+        var _ns6 = (_info.indexOf("Mozilla/5") >= 0);
+        var _ns = (navigator.appName.indexOf("Netscape") >= 0 && ((_info.indexOf("Win") > 0     && _info.indexOf("Win16") < 0 && java.lang.System.getProperty("os.version").indexOf("3.5") < 0) || (_info.indexOf("Sun") > 0) || (_info.indexOf("Linux") > 0) || (_info.indexOf("AIX") > 0) || (_info.indexOf("OS/2") > 0) || (_info.indexOf("IRIX") > 0 )));
+//--></SCRIPT>
+    </COMMENT>
+
+<SCRIPT LANGUAGE="JavaScript"><!--
+    if (_ie == true) document.writeln('\
+        <OBJECT \
+            classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93" \
+            width = "500" \
+            height = "300"  \
+            codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_4_2-windows-i586.cab#Version=1,4,2"> \
+            <PARAM NAME = "code" \
+                   VALUE = "ptolemy.plot.demo.HistogramDemo" > \
+	    <PARAM NAME = "codebase"   VALUE = "../../.." > \
+	    <PARAM NAME = "archive" \
+                   VALUE = "ptolemy/plot/plotmlapplet.jar" > \
+            <PARAM NAME = "type" \
+                   VALUE = "application/x-java-applet;version=1.4.2" > \
+            <PARAM NAME = "scriptable" VALUE = "false" > \
+            <PARAM NAME = "progressbar" VALUE = "true"> \
+            <PARAM NAME = "background" VALUE = "#faf0e6" > \
+            No Java Plug-in support for applet, see <a href="http://java.sun.com/products/plugin/"><code>http://java.sun.com/products/plugin/</code></a> \
+        </OBJECT> \
+        ');
+    else if (_ns == true || _ns6 == true)
+         document.writeln('\
+        <COMMENT> \
+          <EMBED \
+            type = "application/x-java-applet;version=1.4.2" \
+            code = "ptolemy.plot.demo.HistogramDemo" \
+            codebase = "../../.." \
+            archive = "ptolemy/plot/plotmlapplet.jar" \
+            width = "500" \
+            height = "300" \
+            progressbar = "true" \
+            background = "#faf0e6"  \
+            scriptable = "false" \
+            pluginspage = "http://java.sun.com/j2se/1.4.2/download.html"> \
+              <NOEMBED> \
+              No Java Plug-in support for applet, see <a href="http://java.sun.com/products/plugin/"><code>http://java.sun.com/products/plugin/</code></a> \
+              </NOEMBED> \
+           </EMBED> \
+        <COMMENT> \
+        ');
+    else document.writeln('\
+        <APPLET \
+            code = "ptolemy.plot.demo.HistogramDemo" \
+            codebase = "../../.." \
+            archive = "ptolemy/plot/plotmlapplet.jar" \
+            width = "500" \
+            height = "300" \
+            > \
+            <PARAM NAME = "progressbar" VALUE = "true"> \
+            <PARAM NAME = "background" VALUE = "#faf0e6" > \
+            No Java Plug-in support for applet, see <a href="http://java.sun.com/products/plugin/"><code>http://java.sun.com/products/plugin/</code></a> \
+        </APPLET> \
+        ');
+//--></SCRIPT>
+<!-- /HTML CONVERTER -->
+
+<p>
+The above applet shows three histograms. The one in red is a histogram
+of a cosine signal with amplitude 5.0, showing that fewer values lie in
+the ranges in the middle than near the amplitude extremes.
+Each bar is centered in the middle of a histogram bin.
+The height of each bar represents the number of samples that lie
+within that bin.  The bar is not as wide as the bin so that multiple
+histograms show at once.
+<p>
+The blue histogram represents 1000 random numbers in the range (-5.0, 5.0).
+The cyan histogram represents 1000 Gaussian random numbers with
+mean zero and standard deviation 2.0.
+<p>
+The above histogram data is generated by Java code (in the samplePlot()
+method of the Histogram class).  An example of the specification
+of the data in a PlotML file is:
+<p>
+<pre>
+    &lt;?xml version="1.0" standalone="yes"?&gt;
+    &lt;!DOCTYPE plot PUBLIC "-//UC Berkeley//DTD PlotML 1//EN"
+	"http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd"&gt;
+    &lt;plot&gt;
+        &lt;title&gt;Sample histogram&lt;/title&gt;
+        &lt;xLabel&gt;values&lt;/xLabel&gt;
+        &lt;yLabel&gt;count&lt;/yLabel&gt;
+        &lt;yRange min="0.0" max="100.0"/&gt;
+        &lt;barGraph width="0.5" offset="0.15"/&gt;
+        &lt;bin width="1.0" offset="0.5"/&gt;
+        &lt;dataset name="first"&gt;
+            &lt;p y="5.0"&gt;
+            &lt;p y="4.9999013042806855"&gt;
+            &lt;p y="4.99960522101908"&gt;
+            ...
+        &lt;/dataset&gt;
+        &lt;dataset name="second"&gt;
+            &lt;p y="1.424032891368717"&gt;
+            &lt;p y="3.6593908462220632"&gt;
+            ...
+        &lt;/dataset&gt;
+    &lt;/plot&gt;
+
+</pre>
+<p>
+In this syntax, the look and labeling of the plot is specified
+exactly as with other plots.  In fact, the syntax is readable
+by the PlotMLParser class, so it is easy to plot the raw data
+and the histogram from the same specification file.
+Here is an example of a histogram that reads PlotML data from a URL:
+<p>
+<!-- The HTML below is for the Java Plugin.
+	The first section is for IE,
+	the second is for Netscape Communicator
+ -->
+
+<!-- HTML CONVERTER -->
+<SCRIPT LANGUAGE="JavaScript"><!--
+    var _info = navigator.userAgent; 
+    var _ns = false; 
+    var _ns6 = false;
+    var _ie = (_info.indexOf("MSIE") > 0 && _info.indexOf("Win") > 0 && _info.indexOf("Windows 3.1") < 0);
+//--></SCRIPT>
+    <COMMENT>
+        <SCRIPT LANGUAGE="JavaScript1.1"><!--
+        var _ns6 = (_info.indexOf("Mozilla/5") >= 0);
+        var _ns = (navigator.appName.indexOf("Netscape") >= 0 && ((_info.indexOf("Win") > 0     && _info.indexOf("Win16") < 0 && java.lang.System.getProperty("os.version").indexOf("3.5") < 0) || (_info.indexOf("Sun") > 0) || (_info.indexOf("Linux") > 0) || (_info.indexOf("AIX") > 0) || (_info.indexOf("OS/2") > 0) || (_info.indexOf("IRIX") > 0 )));
+//--></SCRIPT>
+    </COMMENT>
+
+<SCRIPT LANGUAGE="JavaScript"><!--
+    if (_ie == true) document.writeln('\
+        <OBJECT \
+            classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93" \
+            width = "500" \
+            height = "300"  \
+            codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_4_2-windows-i586.cab#Version=1,4,2"> \
+            <PARAM NAME = "code" \
+                   VALUE = "ptolemy.plot.plotml.HistogramMLApplet" > \
+	    <PARAM NAME = "codebase"   VALUE = "../../.." > \
+	    <PARAM NAME = "archive" \
+                   VALUE = "ptolemy/plot/plotmlapplet.jar" > \
+            <PARAM NAME = "type" \
+                   VALUE = "application/x-java-applet;version=1.4.2" > \
+            <PARAM NAME = "scriptable" VALUE = "false" > \
+            <PARAM NAME = "progressbar" VALUE = "true"> \
+            <PARAM NAME = "background" VALUE = "#faf0e6" > \
+	    <PARAM NAME = "dataurl" VALUE = "sinusoids.xml" > \
+            No Java Plug-in support for applet, see <a href="http://java.sun.com/products/plugin/"><code>http://java.sun.com/products/plugin/</code></a> \
+        </OBJECT> \
+        ');
+    else if (_ns == true || _ns6 == true)
+         document.writeln('\
+        <COMMENT> \
+          <EMBED \
+            type = "application/x-java-applet;version=1.4.2" \
+            code = "ptolemy.plot.plotml.HistogramMLApplet" \
+            codebase = "../../.." \
+            archive = "ptolemy/plot/plotmlapplet.jar" \
+            width = "500" \
+            height = "300" \
+            progressbar = "true" \
+            background = "#faf0e6" dataurl = "sinusoids.xml"  \
+            scriptable = "false" \
+            pluginspage = "http://java.sun.com/j2se/1.4.2/download.html"> \
+              <NOEMBED> \
+              No Java Plug-in support for applet, see <a href="http://java.sun.com/products/plugin/"><code>http://java.sun.com/products/plugin/</code></a> \
+              </NOEMBED> \
+           </EMBED> \
+        <COMMENT> \
+        ');
+    else document.writeln('\
+        <APPLET \
+            code = "ptolemy.plot.plotml.HistogramMLApplet" \
+            codebase = "../../.." \
+            archive = "ptolemy/plot/plotmlapplet.jar" \
+            width = "500" \
+            height = "300" \
+            > \
+            <PARAM NAME = "progressbar" VALUE = "true"> \
+            <PARAM NAME = "background" VALUE = "#faf0e6" > \
+	    <PARAM NAME = "dataurl" VALUE = "sinusoids.xml" > \
+            No Java Plug-in support for applet, see <a href="http://java.sun.com/products/plugin/"><code>http://java.sun.com/products/plugin/</code></a> \
+        </APPLET> \
+        ');
+//--></SCRIPT>
+<!-- /HTML CONVERTER -->
+
+<p>
+The data here is exactly that of the <a href="Sinusoids.htm">sinusoids</a>
+demo, but <a href="sinusoidsShow.htm">in PlotML format</a>.
+<p>
+Here is an example of data in the simpler ASCII syntax:
+<p>
+<pre>
+    TitleText: Sample histogram
+    XLabel: values
+    YLabel: count
+    YRange: 0.0,100.0
+    BarGraph: 0.5,0.15
+    BinWidth: 1.0
+    BinOffset: 0.5
+    Dataset: first
+    5.0
+    4.9999013042806855
+    4.99960522101908
+        ...
+    Dataset: second
+    1.424032891368717
+    3.6593908462220632
+        ...
+</pre>
+
+<p>This latter syntax is probably more convenient for
+interfacing to arbitrary programs that generate data, since the
+simple list of numbers is often easy to produce.
+
+<p>Either syntax can be simply put in a file and referenced by
+the <i>dataurl</i> applet parameter of HistogramMLApplet
+(HistogramApplet can only read the latter syntax).
+
+<p>&nbsp;
+</body>
+</html>

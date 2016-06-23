@@ -1,0 +1,26 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE plot PUBLIC "-//UC Berkeley//DTD PlotML 1//EN"
+    "http://ptolemy.eecs.berkeley.edu/xml/dtd/PlotML_1.dtd">
+<plot>
+<barGraph width="7" offset="0.15"/>
+<!-- Ptolemy plot, version 5.1p1 , PlotML format. -->
+<title>Assay Validation: Hit Counts</title>
+<xLabel>% Inh.</xLabel>
+<yLabel>Count</yLabel>
+<xRange min="45" max="95"/>
+<xTicks>
+   <tick label="50-60"  position="50"/>
+   <tick label="60-70"  position="60"/>
+   <tick label="70-80"  position="70"/>
+   <tick label="80-90"  position="80"/>
+   <tick label="90-100" position="90"/>
+</xTicks>
+<default marks="none" connected="no" stems="no" />
+<dataset name="Positives" connected="no" stems="no">
+<p x='50' y='200'/>
+<p x='60' y='80'/>
+<p x='70' y='90'/>
+<p x='80' y='20'/>
+<p x='90' y='10'/>
+</dataset>
+</plot>

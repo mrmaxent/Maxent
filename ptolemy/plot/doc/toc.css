@@ -1,0 +1,20 @@
+BODY { background: #6e6e7b; color: #ccccff }
+P { font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold }
+H1 { font-family: Arial, Helvetica, sans-serif;
+	font-size: 18pt;
+	font-weight: bold }
+H2 { font-family: Arial, Helvetica, sans-serif;
+	font-size: 12pt;
+	font-weight: bold }
+H3 { font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold }
+P.indent { font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	margin-left: 10 }
+A:link { color: white }
+A:visited { color: #aaaaff }
+A:active { color: #ffcccc }

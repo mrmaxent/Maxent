@@ -1,0 +1,600 @@
+<!-- $Id: changes.htm,v 1.56 2005/04/20 05:14:37 cxh Exp $-->
+<html>
+<head>
+<title>Ptplot Changes</title>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<link href="default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1><a name="ptplot changes">Ptplot Changes</a></h1>
+
+<H2>The changes between ptplot5.4 and ptplot5.5</H2>
+<menu>
+<li>Christopher Brooks: Run most of main() methods
+inside the Swing Event thread.
+<li>Christopher Brooks: PlotApplet.init(): Run most of
+the method inside the Swing Event thread.
+<li>Christopher Brooks: PlotFrame, PlotApplication,
+EditablePlotMLApplication: Get colors of menus right.
+<li>Ted Nolan: EPSGraphics: if a legend has parens in it, then
+it causes EPS syntax errors.
+<li>Christopher Brooks: Plot: Handle cases where we have only one
+point in a dataset.
+<li>Andreas Traupe: Added new method PlotBox.renameLegend().
+Plot._clear should clear() the Vector not create a new one.
+</menu>
+
+<H2>The changes between ptplot5.3 and ptplot5.4</H2>
+<menu>
+<li>Christopher Hylands Brooks: PlotFrame: 
+handle errors when opening and closing streams
+<li> Steven Nuendorffer: Plot: Avoid drawing points and lines that are not
+visible.
+</menu>
+
+<H2>The changes between ptplot5.2 and ptplot5.3</H2>
+<menu>
+<li> Roger Robins: PlotApplet: Work around problem in Java 1.3.1_08
+where if we create 6 instances of a Plot applet then navigate forward
+then back - IE and Navigator hang.
+<li>Christopher Hylands: reuseDatasets in a PlotML file was 
+being ignored. Added PlotBox.getLegendDataset(),
+Plot.getReuseDatasets().  Plot.addLegend() and PlotMLParser.startElement()
+now check the value of reuseDatasets and acts accordingly.
+(bug reported by Balazs Mezodi)
+<li>Peter N. Steinmetz: Added getXAutoRange(), getYAutoRange(),
+getColors(), setColors(), getPlotRectangle(), setPlotRectangle()
+setPlotRectangle():
+"... allow[s] user specification of the rectangle 
+nside the axes, the 'plot rectangle' of the PlotBox class. I am 
+using this to line up two graphs which share the same time scale. "
+<li> Edward A. Lee: Use a thicker stroke when drawing lines.
+<li> Steve Neuendorffer: Improvements for offscreen buffer support
+so that Ptplot can plot data sets with 20000 points.
+<li> Peter N. Steinmetz: If PlotApplication is called with a "-"
+option, then it reads from standard input.
+<li> Helge Weissig:
+Moved checks for <CODE>original<I>{X,Y}</I>RangeGiven</CODE> from
+<CODE> set<I>{X,Y}</I>Range()</CODE> to
+<CODE>_set<I>{X,Y}</I>Range()</CODE> so that if we have a simple plot
+consisting only of data, then Reset Axes works properly.
+
+<li> Peter Carr: EditablePlot.java: getData() and _setData()
+incorrectly were using _dataset instead of dataset.
+
+</menu>
+
+<H2>The changes between ptplot5.1p3 and ptplot5.2</H2>
+<menu>
+<li> Edward A. Lee, Alberto Gobbi:  Renamed _deferIfNecessary()
+to deferIfNecessary() and made it public.  Added note about 
+using deferIfNecessary() to the Plot class comment that
+describes how to handle modifying the plot from a separate thread.
+<li> David French: added removeLegend()
+<li> John Olmstead, Edward A. Lee: rotate Y axis label
+
+<li> Christopher Hylands: Use .plt and .xml as default extensions when
+opening or saving as, use plot.xml as a default name
+
+<li> Roger Schwenke, Christopher Hylands: Add better documentation
+about how to use Log axes.
+<li> Alberto Gobbi, Christopher Hylands:
+Fix for &lt;dataset name= ... connected=...&gt; to PlotMLParser.java
+
+</menu>
+
+<H2>The changes between ptplot5.1p2 and ptplot5.1p3</H2>
+<menu>
+<li> Ross Beyer: Problems with Solaris installation.
+<li> Laurent Etur: Scale the printout to fit the page
+</menu>
+
+<H2>The changes between ptplot5.1p1 and ptplot5.1p2</H2>
+<menu>
+
+<li> Rob Kroeger: 4 new  PlotBox.exportImage() methods
+that create a BufferedImage to display the plot in.  This
+method can be used to plot data and write out images for
+use in servlets.
+PlotBox._drawPlot and Plot._drawPlot() now take a Rectangle argument
+to support this.
+
+<li> Ross Beyer: When we print, ask the user for the page format.
+
+<li> Paul H. Buckle:
+In class ptolemy.plot.Plot._fillPlot() the instances of -Double.MIN_VALUE
+should be -Double.MAX_VALUE
+
+<li> Paul H. Buckle:
+In ptolemy.plot.PlotBox.clear(boolean) should clear flags for
+_originalYRangeGiven and _originalYRangeGiven
+</menu>
+
+<H2>The changes between ptplot5.1 and ptplot5.1p1</H2>
+<menu>
+<li> PlotBox.write(): Changed plotml.dtd to PlotML_1.dtd
+<li> bin/ptinvoke.in was not shipped in 5.1
+<li> Updated plot.pdf with minor changes
+</menu>
+
+<H2>The changes between ptplot4.1 and ptplot5.1</H2>
+Note that Ptplot 4.1 was not released separately from Ptolemy II.
+Ptplot 4.1 can be found in Ptolemy II 0.4beta
+<menu>
+<li> Various classes were modified to make them thread safe.
+The fill button was causing deadlock.
+<li> X persistence is now supported.
+</menu>
+
+<H2>The changes between ptplot3.1 and ptplot4.1</H2>
+<menu>
+<li> Makefile modified so that the standalone build works better
+
+<li> Changes from Ge Yun &lt;geyu@engr.orst.edu&gt; to make serialization
+work.
+
+<li> Ptplot applets now require Swing, which basically requires the JDK1.2
+plugin.
+
+
+<li> Removed Ptplot.htm, Javascript calling Java does not work under
+Netscape4.6 because of plugin issues.
+</menu>
+
+<H2>The changes between ptplot2.2 and ptplot3.1</H2>
+<menu>
+
+<li> Editable plots (invoke ptplot, and try Edit:Edit Dataset... use the
+  right mouse button to edit the dataset).
+
+<li> Editable format (invoke ptplot, and try Edit:Format).
+
+<li> PlotML file format.
+
+<li> Moved pxgraph classes into compat subdirectory
+
+<li> Added Histogram classes in <CODE>plotml</CODE> package
+and <CODE>histogram</CODE> and <CODE>histogram.bat</CODE> scripts
+</menu>
+
+<H2>The changes between ptplot2.1 and ptplot2.2</H2>
+<menu>
+<li> Added <a href="../EPSGraphics.java"><CODE>EPSGraphics.java</CODE></a>
+which will generate Encapsulated PostScript (EPS) on stdout.
+See the class comment for a description of where stdout goes
+on the various browsers.
+
+<li> PlotBox now has the following keybindings:
+<ul>
+<li> Cntrl-c: Export the plot to the clipboard.
+<li> D: Dump the plot to standard output.
+<li> E: Export the plot to standard output in EPS format.
+<li> F: Fill the plot.
+<li> H or ?: Display a simple help message.
+<li> Cntrl-D or Q: quit
+</ul>
+
+<li> PlotBox:
+  <ul>
+  <li> Support for the <CODE>Wrap: on</CODE> file directive.
+
+  <li> <CODE>setLabelFont()</CODE>: call getFontMetrics to update sized
+  Also, changed labelfont, superscriptfont and titlefont to labelFont etc.
+  Reported by Peter Biechele  &lt;peter.biechele@physik.uni-freiburg.de&gt;
+  </ul>
+<li> Plot.java:
+  <ul>
+  <li> <CODE>samplePlot</CODE> is a new method
+  that creates a sample plot.
+
+  <li> Various changes to support drawing the legend as lines rather
+	than points.
+
+  <li> Fixed bug reported by
+	Porter Mason &lt;pmason@NRAO.EDU&gt;
+        in <CODE>reusedatasets: on</CODE>
+  </ul>
+
+</menu>
+
+<H2>The changes between ptplot2.0 and ptplot2.1</H2>
+<menu>
+<li> Added <a href="../Histogram.java"><CODE>Histogram.java</CODE></a>,
+<a href="../HistogramApplet.java"><CODE>HistogramApplet.java</CODE></a>,
+and
+<a href="../demo/Histogram.htm"><CODE>../demo/Histogram.java</CODE></a>.
+
+<li> Moved index.htm out of the top level, and set up files to use frames.
+<li> Modified top level makefile to use InstallShield's JShield
+to build releases.
+<li> Added <a href="download"><code>doc/download</code></a>
+directory which provides links to multiple download formats
+
+<li> Plot.java:
+Use <CODE>"\t"</CODE> instead of an actual tab so as to avoid problems
+with reindentation.
+Reported by Louis Hernandez, Jr. &lt;lhernan@sandia.gov&gt;
+
+<li> Added <a href="thirdparty.htm">Third Party uses of Ptplot</a>
+web page
+
+<li> Ptplot2.1 was released as part of
+<a href="http://ptolemy.eecs.berkeley.edu/ptolemyII">Ptolemy II 0.2</a>
+
+</menu>
+
+<H2>The changes between ptplot2.0a2 and ptplot2.0</H2>
+<menu>
+<li> Added <a href="thirdparty.htm">Third Party uses of Ptplot</a>
+web page
+</menu>
+
+<H2>The changes between ptplot2.0a2 and ptplot2.0</H2>
+<menu>
+<li> configure now chooses between <CODE>-depend</CODE> and <CODE>-Xdepend</CODE>.
+</menu>
+
+
+<H2>The changes between ptplot2.0a1 and ptplot2.0a2</H2>
+<menu>
+<li> Changed image on index.htm
+<li> Modified help and about content
+<li> Modified Message constructors
+<li> No longer ship LogicAnalyzer, it is not ready
+</menu>
+
+<H2>The changes between ptplot1.3p1 and ptplot2.0a1</H2>
+<menu>
+<li> The major change is that the classes were moved from
+the <CODE>ptplot</CODE> package to the <CODE>ptolemy.plot</CODE> package.
+
+<li> The <CODE>ptplotapplet.jar</CODE> file has been renamed to
+<CODE>ptolemy.plotapplet.jar</CODE> to better reflect the package structure.
+
+<li> <CODE>PlotApplication.java</CODE> was moved to a new directory
+called <CODE>ptolemy/apps</CODE>.
+
+
+<li> The <CODE>pxgraph</CODE> script has been removed.  A new
+script <CODE>ptplot</CODE> replaces it.  Usually, <CODE>ptplot</CODE> uses
+the PlotApplication class.
+If <CODE>pxgraph</CODE> is a link to <CODE>ptplot</CODE>, then when
+<CODE>pxgraph</CODE> is run, it uses the Pxgraph class
+
+
+<li> Removed <CODE>ptplot2mif.tcl</CODE>, it was of little use.
+
+
+<h3>PlotBox</h3>
+<menu>
+
+<li> Changed zoom out so it is not limited to the fill region.
+You can now zoom out arbitrarily far.
+
+
+<li> Fixed a bug where YTicks was not recognized in a file (XTicks was).
+
+
+<li> Fixed a bug where DataSet: with a blank name does not create a blank
+legend entry.
+
+
+<li> Use jdk 1.1 event model everywhere.
+   <br>action() method is gone
+   <br>mouseDown() method is gone
+   <br>mouseDrag() method is gone
+   <br>mouseUp() method is gone
+
+<li> Use jdk 1.1 font support.
+   <br>getFontByName() method is gone
+
+<li> Use jdk 1.1 method names where they are different from jdk 1.0:
+   <br>setSize() replaces resize()
+
+<li> The following methods are now deprecated:
+   <br>init() (use addFillButton and read())
+   <br>parseFile() (use read() -- NOTE: no longer reads pxgraph binary files).
+   <br>setBinary() (use readPxgraph() in the Plot class).
+   <br>setDataurl() (use read())
+   <br>setDocumentBase() (use read())
+   <br>_setButtonsVisibility() (use a menu rather than buttons in applications)
+
+<li> The following methods are new:
+   <br>makeButtons()
+   <br>read()
+   <br>readBinary()
+   <br>zoom()
+
+<li> The following methods are gone:
+   <br>minimumSize()
+   <br>preferredSize()
+   <br>reshape() (replaced by setBounds() for jdk 1.1).
+   <br>_parseBinaryData()
+
+<li> The following members are gone:
+   <br>_graphics (protected).  Use getGraphics() instead.
+
+<li> The following method has been made protected (was public):
+   <br>_drawPlot() (was drawPlot())
+
+
+<li> The following class is gone:
+   <br>PlotDataException (use IOException, which offers identical features).
+
+<li> Used javadoc formatting throughout.
+
+</menu>
+
+<h3>Plot</h3>
+
+Same changes as above, plus...
+
+<menu>
+
+<li> Fixed bug where auto-ranging depended on all data seen historically.
+     Now it is recalculated if boundary points are erased.
+
+<li> New method:
+   <br>clear()
+   <br>readPxgraph() (reads a binary stream)
+
+<li> Deprecated:
+   <br>setNumSets() (no longer needed -- sets are added as they are mentioned).
+   <br>getMaxDataSets() (irrelevant now)
+</menu>
+
+<h3>PlotApplet</h3>
+<menu>
+<li> No longer implements runnable (the run method just called repaint(),
+which seems pointless).  No longer creates a thread.
+
+<li> Removed:
+   <br>run()
+   <br>start()
+   <br>stop()
+
+<li> In the init() method, PlotApplet no longer calls plot().init(),
+which is deprecated.
+This is the only change that is not backwards compatible.
+It means that applets derived from PlotApplet need to replace the
+call to init().
+</menu>
+
+<h3>PlotLive</h3>
+ <p>I was unable to keep this class completely backwards compatible.
+So PlotLiveDemo and PlotLiveDemoApplet both had to be modified for
+things to work again.
+
+ <p>Also I removed the debug printing lines everywhere.
+I found that they produced a huge amount of clutter, making it hard
+to read the code.  And they generated so much info that they were hard
+to use anyway.  And they were creeping into user-level code
+(PlotLiveDemo and PlotLiveDemoApplet).
+
+<h3>PlotLiveApplet</h3>
+New class to handle the thread trickiness for live plots.
+
+<h3>CmdLineArgException</h3>
+This class is now public so that it can be used outside of the plot
+package.
+
+<h3>New classes</h3>
+<dl>
+
+<dt> <a href="../PlotFrame.java">PlotFrame</a>
+<dd> 2-D plotter widget used by PlotApplication, below.
+
+
+<dt> <a href="../PlotApplication.java">PlotApplication</a>
+<dd> Stand alone plotter application, started up by
+<CODE>ptplot</CODE></a>
+
+<dt> <a href="../demo/TwoPlotExample.java">TwoPlotExample</a>
+<dd> a simple example application with two side by side plots.
+
+</dl>
+</menu>
+
+
+<H2>The changes between ptplot1.3 and ptplot1.3p1</H2>
+<menu>
+
+<li> The plotting region is now always white.  Formerly, the <CODE>-bg</CODE>
+option would change the color of the plotting region and the region
+around the plotting region where the legend is.  Now <CODE>-bg</CODE>
+only changed the region around the plotting region.  The reason for
+this change is that the colors of the data sets were designed to be
+used on a white background.
+
+<li> Ignore the <CODE>-bb</CODE> command line argument.  In the X11
+version of <CODE>pxgraph</CODE>, <CODE>-bb</CODE> drew a bounding box
+around the data region. Formerly, the Java version printed a message about
+<CODE>-bb</CODE> not being supported.  In the Java version of
+<CODE>pxgraph</CODE>, the region where plots appear is a different
+color than the surround region, which makes <CODE>-bb</CODE> useless.
+
+<li> Various minor cleanups to the comments.  Stripped out trailing spaces at
+the end of lines.
+
+<li> Added <CODE>fillPlot()</CODE> method back in so that client
+programs can call it.  Reported by Stephan Puchegger &lt;a9127383@unet.univie.ac.at&gt;
+<li> If <CODE>JAVAHOME</CODE> is not set, and <CODE>pxgraph</CODE> cannot
+find a JDK, then it looks in <CODE>/usr/eesww/lang/jdk1.1latest</CODE>.
+This is for use in the EECS Department here at UC Berkeley.
+</menu>
+
+<H2>The changes between ptplot1.2p1 and ptplot1.3</H2>
+<menu>
+<li> <CODE>pxgraph =500x500-0-0</CODE> was throwing
+a numeric exception.
+<li> Added <CODE>ReuseDataSets: on</CODE> file directive, which
+causes datasets with the same name to be merged into one dataset
+when plotted.  This is useful for combining multiple files
+that plot the same datasets.
+<li> Fixed compatibility problem with X11 version of pxgraph.
+The old version of pxgraph allowed blank lines to denote the
+start of a new dataset.  The problem is that we want to ignore
+blank lines in the new format, but still provide compatibility
+with the old behaviour.  The fix was to assume that the file
+is an old format file until we see a new style directive.
+<li> Fixed a bug that was plotting extraneous points before all
+the data was read in from a file.
+<li> The Pxgraph class and the <code>pxgraph</code>script now take
+two new command line arguments:
+<dl>
+<dt> <CODE>-bigendian</CODE>
+<dd> Data files are in big-endian, or network binary format.
+If you are on a little-endian machine, such as a machine
+with an Intel x86 chip, and you would like to read a binary
+format file, created on a big-endian machine, such as a Sun SPARC,
+use the <code>-bigendian</code> flag.
+
+<dt><a name="-littleendian"><code>-littleendian</code></a>
+<dt>Data files are in little-endian, or x86 binary format.
+If you are on a big-endian machine, such as a Sun Sparc,
+and you would like to read a binary
+format file created on a little-endian machine, such as Intel x86
+machine, then use the <code>-littleendian</code> flag.
+<dd>
+
+</dl>
+<CODE>-binary</CODE> now reads pxgraph style binary data in the format
+native to the machine where the Java Ptplot process is running.
+The other binary format read by the <CODE>-binary</CODE> option,
+known as the raw binary format is always reads data as big-endian.
+The <a href="../demo/Endian.htm">Endian Examples</a> page
+illustrates use of the three options.
+
+<li> The Pxgraph class and the <code>pxgraph</code>script now take
+two new command line arguments:
+<DL>
+<dt><code>-o</code> <code><i>output filename</i></code>
+<dd>The name of the file to place the print output in.  Currently
+defaults to <code>/tmp/t.ps</code>.
+<dt><code>-print</code>
+<dd>Bring up the print dialog immediately upon startup.  Unfortunately,
+there is no way to automatically print in JDK1.1, the user must hit
+the <code>Ok</code> button.
+</DL>
+The new command line arguments are used to make it easier to create
+PostScript output.
+
+<li> <code>ptplot2mif.tcl</code> script
+can be used to convert the PostScript output of Ptplot to Framemaker
+MIF format.  This script requires Tcl, and probably won't work under
+Windows.  This script does not do a perfect job converting, but it is
+a start.
+
+<li> URLS with <code>&amp;</code> characters in them were being parsed
+incorrectly.
+ <br> This bug was reported by Marion Schroeder &lt;schroeder@hmi.de&gt;.
+
+<li> A new jar file called <code>ptplotapplet.jar</code> is now
+created.  This jar file is similar to <code>ptplot.jar</code>,
+except it does not include the classes used by the Pxgraph class.
+As a result, <code>ptplotapplet.jar</code> is smaller than
+<code>ptplot.jar</code>.  The Pxgraph and Message classes are not
+used in applets, so there is no need to download them for
+applet only usage.
+
+<li> The <CODE>_graphics</CODE> field in PlotBox is now
+<CODE>transient</CODE> so that PlotBox can be serialized.
+ <br> This bug was reported by
+Patrick Barrett &lt;barrettp@clipper.mdcorp.ksc.nasa.gov&gt;.
+</menu>
+
+<H2>The changes between ptplot1.2 and ptplot1.2p1</H2>
+Ptplot1.2p1 is a bug fix release.
+<menu>
+<li> Ptplot1.1 was able able to parse scientific notation numbers such
+as <code>1.0E-12</code>, but Ptplot1.2 could not.
+The change that caused the bug was that in Ptplot1.2, we used
+<code>java.io.StreamTokenizer</code> to parse the
+numbers.  Unfortunately, StreamTokenizer is buggy, it fails to parse
+scientific notation.  For more information, see
+<A href="http://developer.javasoft.com/developer/bugParade/bugs/4079180.htm"><code>http://developer.javasoft.com/developer/bugParade/bugs/4079180.htm</code></A>.
+The fix was to adapt the Ptplot1.1 number parsing code to handle error bars.
+ <br>
+This bug was reported by Marion Schroeder &lt;schroeder@hmi.de&gt;.
+</menu>
+
+<H2>The changes between ptplot1.1 and ptplot1.2</H2>
+<menu>
+<li> Added support for JAR files.
+
+<li> Added <A href="troubleshooting.htm">Troubleshooting Ptplot</A>
+and <A href="ptplotfaq.htm">Ptplot FAQ</A>.
+
+
+<li> Added a demo that illustrates a
+JavaScript Interface to Ptplot
+
+<li> If <code>setXRange()</code> or <code>setYRange()</code> are not
+explicitly called by the user, then the data is padded slightly so that
+the data is not plotted on the axes.  The
+<A href="../demo/Marks.htm">Black and white plot using unique marks</A>
+demo is padded.  Many of the other demos are not padded because the X
+and Y ranges are explicitly set either in the data file or in the Java
+code that created the plot.
+
+
+<li> Raw binary files that consist only of 4 byte floats are now supported.
+Formerly, ptplot only supported Joe Buck's binary format, which used
+single characters as plot directives (see the
+<A href="../../../doc/codeDoc/ptolemy/plot/compat/PxgraphParser.html#-binary flag">javadoc Pxgraph documentation</A>
+for details about this format).  The new raw binary format
+now reads the first byte, and if it is not a <code>d</code>, then
+the raw 4 byte float format is assumed.
+ <P>This format was prompted by a request from
+John O'Sullivan&lt;John.OSullivan@analog.com&gt;.
+The <code>demo/data/bin.plt</code> was converted to the new raw 4 byte float
+format.
+
+<li> Error bars are now generated.  If the data file contains a line that
+consists of four numbers, then the first two numbers are assumed to be the
+x and y values, and the last two numbers are assumed to be the lower and upper
+y values for the error bar.  The numbers can be separated by white space
+or a comma.  See the <A href="../demo/ErrorBars.htm">Error Bars</A> demo
+for more information.
+ <br>The error bar code is based on a code fragment from
+Michael Altmann &lt;michael@email.labmed.umn.edu&gt;.
+
+<li> Ptplot now supports logarithmic axes, which are
+controlled by the file directives: <code>XLog: on</code> and
+<code>YLog: on</code>.  The <code>pxgraph</code> script
+now takes <code>-lnx</code> and <code>-lny</code> arguments as well.
+See the <A href="../demo/LogAxes.htm">Log Axes</A> demo for more information.
+
+<li> Fixed problem with recycling colors and marks.
+The bug was reported by Lutz Harnisch, &lt;Lutz.Harnisch@hmrag.com&gt;
+
+</menu>
+
+<H2>The changes between ptplot1.0 and ptplot1.1</H2>
+<menu>
+<li> In 1.1, PlotBox extends Panel.  In 1.0 PlotBox extended Applet.
+This makes it much easier to use Plot as an component in either an
+application or an applet that contains other components.
+<li> The PlotApplet class is new in 1.1.  PlotApplet can be used
+for applets that use the Plot class, or the PlotLive class.
+As a result, the html applet tags for the demos now use
+<code>code="ptplot.PlotApplet"</code>.
+Formerly, they used
+<code>code="ptplot.Plot"</code>
+<li> The directory structure has been reorganized so that
+the plot classes are in ptplot, and the demo classes are in
+<A href="../demo/toc.htm" target="toc"><code>ptplot/demo</code></A>.
+This means that the ptplot.zip does not contain the demo
+classes, which is better if anyone actually wants to _use_ the plotter
+instead of just running the demos.
+<li> There is a Playing Wave Applet that uses real time audio.
+<I>Note, this demo was removed, see
+<a href="http://ptolemy.eecs.berkeley.edu/java/old/ptplot1.3/ptplot/demo/audio/PlayingWave.htm"><CODE>http://ptolemy.eecs.berkeley.edu/java/old/ptplot1.3/ptplot/demo/audio/PlayingWave.htm</CODE></a>
+</I>
+<li> Edward Lee fixed a bar graph label bug reported by Marc Ellis.
+<li> A few other minor bugs were fixed.
+</menu>
+
+<p><font size="2" color="#cc0000">Last Updated: $Date: 2005/04/20 05:14:37 $</font>
+</body>
+</html>

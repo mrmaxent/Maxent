@@ -1,0 +1,337 @@
+<!-- $Id: install.htm,v 1.38.2.1 2005/07/28 17:19:36 cxh Exp $ -->
+<html>
+<head>
+<title>Installing Ptplot</title>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<link href="default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1>Installing Ptplot</h1>
+Ptplot 5.5 requires Java 1.3 or later.
+Java 1.4.2 is preferred, we use Java 1.4.2_08.  Java 1.4 has
+a bug concerning viewing local applets that have spaces in the path
+name, for details, see
+the <a href="troubleshooting.htm#spaces">Troubleshooting Guide</a>.
+
+<br>To run Ptplot, the Java runtime environment (JRE) is sufficient.
+<br>To run the applets in a browser, the Java plug-in is required.
+<br>To extend Ptplot with your own Java code, the Java development kit
+(JDK) or an equivalent Java development environment is required.  The
+JDK includes a Java compiler.
+
+<p>To run Ptplot 5.5 applets, you must install the version 1.3
+or later of the
+<a href="http://www.javasoft.com/products/plugin/" target="_top">Javasoft Java Plug-in</a>.
+In theory, it should be possible to run Ptplot using the Java 1.2 plug-in,
+but we recommend upgrading to the Java 1.4.2 plug-in.
+
+<p> If you will be extending the Ptplot classes, then you
+should install the Java 1.4.2 Java Development Kit: 
+<a href="http://java.sun.com/j2se/1.4/" target="_top"><CODE>http://java.sun.com/j2se/1.4/</CODE></a>
+
+<p>If you do not want to require your users to install the Java 1.4.2  plug-in,
+then you should stick with Ptplot 3.1, which does not use Swing.
+
+
+<p>Ptplot is distributed in several formats.
+<menu>
+ <li><a href="#tarorzip">Instructions for the tar file and zip file format.</a>
+ <li><a href="#installanywhere">Instructions for the InstallAnywhere installer.</a>
+ <li>As part of the Ptolemy II distribution - This page covers the
+ above two cases, for information about installing Ptolemy II
+see <code>$PTII/doc/index.htm</code>
+
+</menu>
+
+
+<h2><a name="tarorzip">Ptplot Installation under Unix or Windows with Cygwin from tar or zip files</a></h2>
+
+Ptplot is shipped with the java files precompiled, so you need not
+recompile.  However, if you are using the standalone scripts such as
+<CODE>ptplot</CODE>, then you may want to go through the installation
+procedure so that the standalone scripts are properly localized.
+
+ <p>This tar file (ptplot5.5.tar.gz), will unpack into called
+ptplot5.5, and the configure-make-make install process will not
+install any files outside of this ptplot5.5 directory.  So if you
+unpack the tar file into /usr/local, after installing you will have
+/usr/local/ptplot5.5, and you may want to tell users to add
+/usr/local/ptplot5.5/bin to their PATH.  The scripts in the bin
+directory will run the plotter as a standalone application, or they
+can add /usr/local/ptplot5.5 to their Java CLASSPATH.
+
+ <p> If you are using Windows and you want to rebuild Ptplot or
+localize the standalone scripts, then you will need to install the
+Cygwin toolkit from
+<a href="http://sources.redhat.com/cygwin/" target="_top"><CODE>http://sources.redhat.com/cygwin/</CODE></a>
+<p> We have packaged up the necessary Cygwin tools and made them available at
+<a href="http://ptolemy.eecs.berkeley.edu/ptolemyII/ptIIlatest/cygwin.htm"><code>http://ptolemy.eecs.berkeley.edu/ptolemyII/ptIIlatest/cygwin.htm</code></a>.
+
+If you are running Windows and do not want to install the Cygwin toolkit,
+then see
+<a href="#windowswithoutcygwin">Using Ptplot under Windows without Cygwin</a>
+
+ <p>Below are the installation instructions for Unix and Windows
+with Cygwin.
+<ol>
+
+<li> Be sure that JDK 1.4.2  is installed, and that <CODE>javac</CODE>
+is in your path.
+
+<li> Untar or unzip the Ptplot distribution.
+
+ <br> Note that under Java 1.4.0_01, viewing local applets that have
+spaces in the path name may fail if the applet tries to download a
+data file.  The workaround is to place the Ptplot distribution in a
+directory that does not have space in the pathname.  For details, see
+the <a href="troubleshooting.htm#spaces">Troubleshooting Guide</a>.
+
+<li> Set the <CODE>PTII</CODE> environment variable to point
+to the top of the Ptplot tree.  Under C-shell, one would do:
+<pre>
+setenv PTII ~/src/ptolemy/ptplot5.5
+</pre>
+
+Under Cygwin with bash:
+<pre>
+PTII=c:\\ptolemy\\ptplot5.5
+export PTII
+</pre>
+
+<li> cd into the <CODE>PTII</CODE> directory:
+<pre>
+cd "$PTII"
+</pre>
+(The double quotes are only necessary if $PTII has spaces in it)
+
+<li> Run <CODE>configure</CODE>
+<pre>
+rm -f config.*
+./configure
+</pre>
+
+
+<li> Run make install to compile the Java files and create the jar files.
+<pre>
+make install
+</pre>
+
+
+<li> View the applets by going starting your browser and going to:
+<a href="index.htm">ptolemy/plot/doc/index.htm</a>
+
+<li> <code>$PTII/bin</code> contains the following scripts
+<dl>
+<dt><code>histogram</code>
+<dd> Start up a histogram
+
+<dt><code>ptplot</code>
+<dd> Start up the plotter that understands PlotML
+
+<dt><code>pxgraph</code>
+<dd> Start up a plotter that understands the older xgraph syntax.
+
+</dl>
+For details about starting up Ptplot by hand, see
+<a href="ptplotfaq.htm#simpleapp">How do I create a simple standalone Plot application?</A>
+
+</ol>
+
+<h2><a name="installanywhere">InstallAnywhere Installer</a></h2>
+Ptplot is also available in several self-extracting formats
+that were created with InstallAnywhere.
+
+ <p> Note that under Java 1.4.0_01, viewing local applets that have
+spaces in the path name may fail if the applet tries to download a
+data file.  The workaround is to place the Ptplot distribution in a
+directory that does not have space in the pathname.  For details, see
+the <a href="troubleshooting.htm#spaces">Troubleshooting Guide</a>.
+
+ <p>Note that when you run the installer under Windows, Ptplot is
+added to your Start menu under Ptolemy -&gt; Ptplot 5.5.
+
+
+<h2>Notes about building and installing</h2>
+<h3>How does configure work?</h3>
+<CODE>configure</CODE> is a <CODE>/bin/sh</CODE> script
+that determines some information about your environment and
+then modifies a few files.
+
+When the <a href="../../../configure"><CODE>configure</CODE></a>
+ script is run, it reads in
+<a href="../../../mk/ptII.mk.in"><CODE>mk/ptII.mk.in</CODE></a>
+and
+<a href="../../../bin/ptinvoke.in"><CODE>bin/ptinvoke.in</CODE></a>
+
+generates
+<a href="../../../mk/ptII.mk.in"><CODE>mk/ptII.mk</CODE></a>
+and
+<a href="../../../bin/ptplot"><CODE>bin/ptplot</CODE></a>
+
+ <p>To get help with <CODE>configure</CODE>, try
+<pre>
+./configure --help
+</pre>
+
+
+ <p> <CODE>configure</CODE> reads in the <CODE>.in</CODE> files
+and substitutes strings inside the <CODE>@</CODE>
+ <p>For example, <CODE>configure</CODE> reads in
+<a href="../../../bin/ptinvoke.in"><CODE>bin/ptinvoke.in</CODE></a>
+and sees
+<pre>
+PTII_DEFAULT=@PTII_DEFAULT@
+PTJAVA_DIR=@PTJAVA_DIR@
+</pre>
+
+becomes
+<pre>
+PTII_DEFAULT=/users/cxh/ptII
+PTJAVA_DIR=/opt/jdk1.3
+</pre>
+
+
+
+<h3><a name="windowswithoutcygwin">Using Ptplot under Windows without Cygwin</a></h3>
+Below are the instructions for using Ptplot
+if you are under Windows and you do not have the Cygwin and have
+downloaded the tar or zip files.  
+
+<ol>
+<li> Set the <CODE>PTII</CODE> variable to the top-level
+directory of the Ptplot tree.
+<pre>
+C:\ptolemy\ptplot5.5&gt; PTII=c:\\ptolemy\\ptplot5.5
+</pre>
+<CODE>PTII</CODE> is used by the standalone <CODE>ptplot.bat</CODE>
+script and other scripts
+<br>(The double backslash is necessary because otherwise bash will interpret 
+<code>c:\ptolemy\ptplot5.5</code> as <code>c:ptolemyptolemy5.5</code>)
+
+<li> Be sure that <code>java</code> is in your path by running
+<code>java -version</code>
+<li> Add <code>%PTII%\bin</code> to your PATH.
+<li> Run <code>ptplot.bat</code>
+
+</ol>
+
+Usually, it is not necessary to recompile the Ptplot classes, but
+below are the instructions for recompiling by hand under Windows without
+Cygwin.
+
+<ol>
+<li> To compile the Ptplot Java classes, they must be in the directory
+ptolemy\plot.
+
+<pre>
+C:\ptolemy\ptplot5.5&gt; cd ptolemy\plot
+</pre>
+
+
+<li> set your CLASSPATH to ..\..
+<pre>
+C:\ptolemy\ptplot5.5\ptolemy\plot&gt;set CLASSPATH=..\..
+C:\ptolemy\ptplot5.5\ptolemy\plot&gt;echo %CLASSPATH%
+..\..
+</pre>
+
+<li> Remove the old Java files and compile them
+<pre>
+C:\ptolemy\ptplot5.5\ptolemy\plot&gt;del  *.class
+C:\ptolemy\ptplot5.5\ptolemy\plot&gt;javac *.java
+</pre>
+
+<li> Run <CODE>ptplot.bat</CODE>, which reads <CODE>%PTII%</CODE>
+<pre>
+C:\ptolemy\ptplot5.5\ptolemy\plot&gt;ptplot.bat
+</pre>
+
+</ol>
+
+
+<h3>Installing Ptplot as an applet</h3>
+Ptplot includes several jar files, which are collections of
+Java <CODE>.class</CODE> files
+<dl>
+
+<dt> <CODE>plotapplet.jar</CODE>
+<dd>  .class files necessary for simple JDK1.1
+browser applets - no pxgraph, no plotml.
+
+<dt> <CODE>pxgraphapplet.jar</CODE>
+<dd> .class files necessary for simple JDK1.1
+browser applets with pxgraph classes, no plotml.
+Applets that use the <CODE>pxgraphargs</CODE> applet parameter
+should use this jar file.
+
+<dt> <CODE>plotmlapplet.jar</CODE>
+<dd> .class files necessary for PlotML applets -
+includes com/microstar/xml and the plotml code, but does not include pxgraph,
+or PlotFrame.
+
+<dt> <CODE>plot.jar</CODE>
+
+<dd> The standard Ptolemy II jar file that includes the
+ptolemy/plot/*.class files and the class files in plotml and compat.
+Does not include com/microstar/xml or ptolemy/gui.
+<CODE>plot.jar</CODE> is used by the Ptolemy II build system.
+
+<dt> <CODE>plotapplication.jar</CODE>
+
+<dd> .class files necessary for standalone applications - includes
+com/microstar/xml, ptolemy/gui and the plotml code, but does not
+include pxgraph.  If <CODE>plotapplication.jar</CODE> is
+present, then it is used by the standalone scripts (<CODE>ptplot</CODE> etc.)
+
+</dl>
+
+The best way to use Ptplot as an applet is to copy the appropriate
+<CODE>*applet.jar</CODE> file into the same directory as your applet,
+and then to use the <CODE>archive</CODE> applet directive.
+For examples of applet html code, see the demonstrations.
+
+
+<h3>Installing Ptplot as an application</h3>
+
+Under Unix and Windows with the Cygwin toolkit,
+ ptplot can be run as three standalone applications:
+<menu>
+<li> <CODE>ptplot</CODE> - A modern plot application that
+with a menubar and such.
+<li> <CODE>histogram</CODE> - A histogram plot application
+<li> <CODE>pxgraph</CODE> - A plot application that
+is mostly backward compatible with the older X11 <CODE>pxgraph</CODE>
+program
+</menu>
+
+When configure is run, it substitutes variables inside <CODE>ptinvoke.in</CODE>
+and produced <CODE>ptplot</CODE>.  The <CODE>ptplot</CODE> script
+is shared between the standalone applications, <CODE>ptplot</CODE>
+determines what name it was called with, and selects the appropriate
+class accordingly.
+
+ <p>If the <CODE>ptplot</CODE> script is run,
+then <CODE>ptolemy.plot.PlotApplication</CODE> is run
+
+ <p>If the <CODE>ptplot</CODE> script is copied to <CODE>histogram</CODE>,
+then <CODE>ptolemy.plot.plotml.HistogramMLApplication</CODE> is run
+
+ <p>If the <CODE>ptplot</CODE> script is copied to <CODE>pxgraph</CODE>,
+then <CODE>ptolemy.plot.compat.PxgraphApplication</CODE> is run
+
+ <p>Under Unix or Windows with Cygwin, you can use a hard link to
+create the histogram and pxgraph script:
+
+<pre>
+cd $PTII/bin
+ln ptplot histogram
+ln ptplot pxgraph
+</pre>
+
+ <p>Under Windows in a DOS shell, three .bat scripts are provided:
+<CODE>ptplot.bat</CODE>, <CODE>histogram.bat</CODE> and
+<CODE>pxgraph.bat</CODE>
+
+<p><font size="2" color="#cc0000">Last Updated: $Date: 2005/07/28 17:19:36 $</font>
+</body>
+</html>
