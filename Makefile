@@ -1,8 +1,8 @@
 
 compile:
-	/usr/common/jdk1.5.0_06/bin/javac -g density/ParamsPre.java
+	javac -g density/ParamsPre.java
 	java density.ParamsPre typesafe > density/Params.java
-	/usr/common/jdk1.5.0_06/bin/javac -g density/*.java density/tools/*.java
+	javac -g density/*.java density/tools/*.java
 	java density.Params density/*.java
 	cat density/help.html.pre > density/help.html; java density.Params write >> density/help.html; echo "</blockquote><br></body></html>" >> density/help.html
 	javadoc -d html -subpackages density
