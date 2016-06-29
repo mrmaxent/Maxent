@@ -1,6 +1,7 @@
-# class files, jar files, emacs backup files, and javadoc files
+# class files, jar files, zip files, emacs backup files, and javadoc files
 *.class
 *.jar
+*.zip
 *~
 html/
 
