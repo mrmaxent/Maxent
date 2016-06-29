@@ -28,7 +28,7 @@ public class ParallelRun {
 	this.verbose = verbose;
 	Collection<Future<Object>> futures = null;
 	try { futures = threadPool.invokeAll(tasks); } 
-	catch (InterruptedException _) {}
+	catch (InterruptedException e) {}
 	if (futures != null) for (Future<Object> f : futures) {
 	    try { f.get(); }
 	    catch (InterruptedException ex) {}

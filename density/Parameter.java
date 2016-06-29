@@ -112,14 +112,14 @@ class Parameter {
     }
 
     String getdoc() {
-	return "   /**\n   * Get value of <i>" + name + "</i> parameter: " + tooltip + "\n   */";
+	return "   /**\n   * Get value of <i>" + name + "</i> parameter: " + tooltip.replaceAll("<html>", "").replaceAll("> 1", "is greater than 1") + "\n   * @return The value <i>" + name + "</i> parameter" + "\n   */";
     }
     String getfn() { 
 	return "public " + typename() + (isBoolean()?" is":" get") + capname() + "() { return get" + typename() + "(\"" + name + "\"); }"; 
     }
 
     String setdoc() {
-	return "   /**\n   * " + (isToggle() ? "" : "Set value of <i>" + name + "</i> parameter: ") + tooltip + (defaultValue.toString().equals("") ? "" : "\n   * <p>\n   * Default value is " + defaultValue + ".") + "\n   * @param value the " + (isToggle() ? "prefix" : "new value") + "\n   */";
+	return "   /**\n   * " + (isToggle() ? "" : "Set value of <i>" + name + "</i> parameter: ") + tooltip.replaceAll("<html>", "").replaceAll("> 1", "is greater than 1") + (defaultValue.toString().equals("") ? "" : "\n   * <p>\n   * Default value is " + defaultValue + ".") + "\n   * @param value the " + (isToggle() ? "prefix" : "new value") + "\n   */";
     }
     String setfn() {
 	return (isHidden()?"":"public ") + "void " + (isToggle() ? "" : "set") + capname() + "(" + typename() + " value) { " + (isToggle() ? ("parseParam(\""+name+"=\"+value)") : "setValue(\"" + name + "\", value)") + "; }"; 

@@ -8,7 +8,7 @@ import java.awt.image.*;
 import java.text.NumberFormat;
 import javax.swing.*;
 import javax.swing.event.*;
-import com.sun.image.codec.jpeg.*;
+// import com.sun.image.codec.jpeg.*;
 
 public class Show {
     Display theDisplay;

@@ -1,3 +1,8 @@
+# class files, jar files, and emacs backup files
+*.class
+*.jar
+*~
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

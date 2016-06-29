@@ -225,7 +225,6 @@ public class ParamsPre extends Parameters {
 	"</ul>",
 	"<p>",
 	"The <code>params.setSelections()</code> method is needed only if one or more of the toggle parameters have been used (toggle species selected, toggle layer type, toggle layer selected).",
-	"<p>"
     };
 
     void typesafe() {
@@ -235,9 +234,9 @@ public class ParamsPre extends Parameters {
        for (String s: paramsJavadoc) System.out.println(" * " + s);
        System.out.println(" */");
        System.out.println("public class Params extends ParamsPre {");
-       System.out.println("  /**\n   * Get the type of a parameter, or <code>null</code> if the parameter doesn't exist\n   * @param param the parameter\n   */");
+       System.out.println("  /**\n   * Get the type of a parameter, or <code>null</code> if the parameter doesn't exist\n   * @param param the parameter\n   * @return The parameter type\n   */");
        System.out.println("  public String getType(String param) { if (!isParam(param)) return null; return getParameter(param).typename(); }");
-       System.out.println("  /**\n   * Get a list of all Maxent parameters\n   */");
+       System.out.println("  /**\n   * Get a list of all Maxent parameters\n   * @return The list of parameters\n   */");
        System.out.print("   public String[] getParameters() { return new String[] { ");
        boolean started = false;
        for (Parameter param: orderedParams) {
