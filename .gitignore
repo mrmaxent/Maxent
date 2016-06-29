@@ -1,7 +1,8 @@
-# class files, jar files, and emacs backup files
+# class files, jar files, emacs backup files, and javadoc files
 *.class
 *.jar
 *~
+html/
 
 # Windows image file caches
 Thumbs.db
