@@ -1,0 +1,27 @@
+Maxent is distributed under MIT license (see LICENSE.md). The terms
+of the licenses of third-party libraries can be found in
+license-3rd-party.txt. A condensed list is also reproduced here:
+
+ptolemy/plot:
+PtPlot
+Copyright (c) 1995-2005 The Regents of the University of California
+http://ptolemy.eecs.berkeley.edu/java/ptplot/
+MIT license variant
+
+gui/layouts:
+Copyright (c) 2003-2005 DocJava, Inc.
+http://www.docjava.com/book/cgij/code/index.html
+Public domain
+
+gnu/getopt:
+GNU getopt
+Copyright (c) 1987-1997 Free Software Foundation, Inc.
+Java Port Copyright (c) 1998 Aaron M. Renn
+https://github.com/arenn/java-getopt/tree/master/gnu/getopt
+GNU LIBRARY GENERAL PUBLIC LICENSE version 2
+
+com/macfaq/io:
+Little Endian input and output streams
+Copyright (c) 1998, 1999, 2002 Elliotte Rusty Harold
+http://www.cafeaulait.org/books/javaio/ioexamples/index.html
+Public domain
