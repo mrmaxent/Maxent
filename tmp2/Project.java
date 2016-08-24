@@ -47,7 +47,8 @@ public class Project {
     }
 
     boolean is(String s) { return params.getboolean(s); }
-    boolean cumulative() { return params.cumulative(); }
+    boolean logistic() { return params.logistic(); }
+    boolean cumulative() { return params.getString("outputformat").toLowerCase().equals("cumulative"); }
 
     Grid[] allGrids() {
 	ArrayList result = new ArrayList();
@@ -100,21 +101,21 @@ public class Project {
 	return new LazyGrid(cfilename);
     }
 
-    public void doProject(String lambdaFile, String gridDir, String outFile) throws IOException {
-	doProject(lambdaFile, gridDir, outFile, null);
+    public void doProject(String lambdaFile, String gridDir, String outFile, boolean cumulative) throws IOException {
+	doProject(lambdaFile, gridDir, outFile, cumulative, true, null);
     }
-    public void doProject(String lambdaFile, GridSetFromFile gs, String outFile) throws IOException {
+    public void doProject(String lambdaFile, GridSetFromFile gs, String outFile, boolean cumulative, boolean tryit) throws IOException {
 	this.gs = gs;
-	doProject(lambdaFile, (String) null, outFile, null);
+	doProject(lambdaFile, (String) null, outFile, cumulative, tryit, null);
     }
-    public void doProject(String lambdaFile, String gridDir, String outFile, String clampedFileName) throws IOException {
+    public void doProject(String lambdaFile, String gridDir, String outFile, boolean cumulative, boolean tryit, String clampedFileName) throws IOException {
 	Utils.reportDoing("Projecting...");
 	Grid[] outGrids = projectGrid(lambdaFile, gridDir);
 	if (clampedFileName==null) outGrids = new Grid[] { outGrids[0] };
 	if (!Utils.interrupt) {
-	    outGrids[0].name = outGrids[0].name + " " + params.getString("outputformat") + " values";
+	    outGrids[0].name = outGrids[0].name + " " + (logistic()?"logistic":(cumulative?"cumulative":"raw")) + " values";
 	    String[] filenames = new String[] { outFile, clampedFileName };
-	    GridWriter.writeGrids(outGrids, filenames, cumulative());
+	    GridWriter.writeGrids(outGrids, filenames, cumulative);
 	}
 	close();
     }
@@ -275,10 +276,8 @@ public class Project {
 		    if (pred>1) pred=1;
 		    if (priorDistribution!=null)
 			pred *= priorDistribution.eval(r,c);
-		    if (entropy!=-1 && params.logistic())
+		    if (entropy!=-1 && logistic())
 			pred = logistic(pred, entropy);
-		    if (entropy!=-1 && params.cloglog())
-			pred = cloglog(pred, entropy);
 		    if (Double.isNaN(pred) || Double.isInfinite(pred) || Float.isInfinite((float) pred)) {
 			double newPred = (sum>lPN) ? (cumulative()?100:1.0) : 0.0;
 			if (complaints)
@@ -326,12 +325,6 @@ public class Project {
     static double logistic(double raw, double entropy, double dp) {
 	double v = raw * Math.exp(entropy);
 	return dp*v / ((1-dp)+dp*v);
-    }
-    static double cloglog(double raw, double entropy) {
-	return 1-Math.exp(-raw * Math.exp(entropy));
-    }
-    double occurrenceProbability(double raw, double entropy) {
-        return params.logistic() ? logistic(raw, entropy) : cloglog(raw, entropy);
     }
 
     /*
@@ -519,7 +512,7 @@ public class Project {
 		outFile.substring(0, outFile.length()-4) + "_clamping" + outFile.substring(outFile.length()-4):
 		null;
 	    Project project = new Project(params);
-	    project.doProject(lambdaFile, gridDir, outFile, clampout);
+	    project.doProject(lambdaFile, gridDir, outFile, params.getString("outputformat").toLowerCase().equals("cumulative"), false, clampout);
 	}
 	catch (IOException e) {
 	    System.out.println("Error: " + e.toString());

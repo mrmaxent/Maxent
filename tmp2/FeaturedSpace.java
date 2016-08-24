@@ -79,7 +79,7 @@ public class FeaturedSpace {
 	Project proj = new Project(params);
 	for (int i=0; i<numPointsForNormalizer; i++) {
 	    double d = getDensity(i)/densityNormalizer;
-	    totPred += proj.occurrenceProbability(d, entropy);
+	    totPred += proj.logistic(d, entropy);
 	}
 	return totPred/numPointsForNormalizer;
     }

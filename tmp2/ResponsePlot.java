@@ -78,7 +78,7 @@ public class ResponsePlot extends MyPlot {
 	_bottomPadding = 0;
 	_rightPadding = 0;
 	_leftPadding = 0;
-	if (params.occurrenceProbability() && !exponent) setYRange(0,1);
+	if (params.logistic() && !exponent) setYRange(0,1);
 	if (params.cumulative() && !exponent) setYRange(0,100);
 	setTitleFont("Helvetica bold 12");
 	setLabelFont("Helvetica plain 9");

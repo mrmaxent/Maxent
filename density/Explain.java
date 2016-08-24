@@ -50,6 +50,7 @@ public class Explain extends JFrame implements ActionListener {
     double[] mean, contribs;
     float[][] minmax;
     boolean[] isCategorical;
+    boolean cloglog;
     HashMap map;
     int nvars=0;
     NumberFormat nf;
@@ -69,14 +70,15 @@ public class Explain extends JFrame implements ActionListener {
     static final private String MODEL = "model";
 
     public Explain(String[] args) throws IOException {
-	String usage = "Usage: density.Explain [-l lambdafile] predictionFile predictorsDirectory";
-	Getopt g = new Getopt("Show", args, "l:");
+	String usage = "Usage: density.Explain [-c] [-l lambdafile] predictionFile predictorsDirectory";
+	Getopt g = new Getopt("Show", args, "cl:");
 	String lambdafile=null;
 
 	int gg;
 	while ((gg=g.getopt()) != -1) {
 	    switch(gg) {
 	    case 'l': lambdafile = g.getOptarg(); break;
+	    case 'c': cloglog = true; break;
 	    default: System.out.println(usage); System.exit(0);
 	    }
 	}
@@ -101,7 +103,9 @@ public class Explain extends JFrame implements ActionListener {
 	    if (args.length>1) {
 		System.out.println("Loading " + lambdafile);
 		map = new HashMap();
-		proj = new Project(new Params());
+	        Params params = new Params();
+	        if (cloglog) params.setOutputformat("Cloglog");
+		proj = new Project(params);
 		proj.mapping = true;
 		proj.varmap = map;
 		projgrid = proj.projectGrid(lambdafile, null)[0];
@@ -116,7 +120,7 @@ public class Explain extends JFrame implements ActionListener {
 		    minmax[i] = predictors[i].minmax();
 		}
 		initIsCategorical();
-		proj2 = new Project(new Params());
+		proj2 = new Project(params);
 		proj2.mapping = true;
 		proj2.varmap = map;
 		proj2grid = proj2.projectGrid(lambdafile, null)[0];
@@ -212,7 +216,7 @@ public class Explain extends JFrame implements ActionListener {
 	double[] x = new double[nvars];
 	contribs = new double[nvars];
 	for (int i=0; i<nvars; i++) x[i] = i+1;
-	logitplot.makeplot(x, new double[nvars], null, true, true, "Contribution to logit");
+	logitplot.makeplot(x, new double[nvars], null, true, true, "Contribution to "+(cloglog?"linear predictor":"logit"));
 	logitplot.addMouseMotionListener(new MouseMotionListener() {
 		public void mouseMoved(MouseEvent e) {
 		    double x = logitplot.plotXtoX(e.getX());
@@ -369,7 +373,7 @@ public class Explain extends JFrame implements ActionListener {
 	    }
 	}
 	nf.setMaximumFractionDigits(3);
-	logitplot.setTitle("Contribution to logit" + (pred.hasData(r,c) ? " (sum=" + nf.format(logit) + ")": ""));
+	logitplot.setTitle("Contribution to "+(cloglog?"linear predictor":"logit") + (pred.hasData(r,c) ? " (sum=" + nf.format(logit) + ")": ""));
 	logitplot.fillPlot(); // causes y-range to be recalculated
     }
 

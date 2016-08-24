@@ -522,7 +522,7 @@ Any boolean flag can be given the prefix "no" or "dont" to turn the flag off.  A
 <tr><td>responsecurves</td><td>P</td><td>boolean</td><td>false</td><td><html>Create graphs showing how predicted relative probability of occurrence depends on the value of each environmental variable
 <tr><td>pictures</td><td></td><td>boolean</td><td>true</td><td>Create a .png image for each output grid
 <tr><td>jackknife</td><td>J</td><td>boolean</td><td>false</td><td><html>Measure importance of each environmental variable by training with each environmental variable first omitted, then used in isolation
-<tr><td>outputformat</td><td></td><td>string</td><td>logistic</td><td>Representation of probabilities used in writing output grids.  See Help for details
+<tr><td>outputformat</td><td></td><td>string</td><td>cloglog</td><td>Representation of probabilities used in writing output grids.  See Help for details
 <tr><td>outputfiletype</td><td></td><td>string</td><td>asc</td><td><html>File format used for writing output grids
 <tr><td>outputdirectory</td><td>o</td><td>directory</td><td></td><td>Directory where outputs will be written.  This should be different from the environmental layers directory.
 <tr><td>projectionlayers</td><td>j</td><td>file/directory</td><td></td><td><html>Location of an alternate set of environmental variables.  Maxent models will be projected onto these variables.<br>Can be a .csv file (in SWD format) or a directory containing one file per variable.<br>Multiple projection files/directories can be separated by commas.
@@ -550,7 +550,7 @@ Any boolean flag can be given the prefix "no" or "dont" to turn the flag off.  A
 <tr><td>linear</td><td>l</td><td>boolean</td><td>true</td><td>Allow linear features to be used
 <tr><td>quadratic</td><td>q</td><td>boolean</td><td>true</td><td>Allow quadratic features to be used
 <tr><td>product</td><td>p</td><td>boolean</td><td>true</td><td>Allow product features to be used
-<tr><td>threshold</td><td></td><td>boolean</td><td>true</td><td>Allow threshold features to be used
+<tr><td>threshold</td><td></td><td>boolean</td><td>false</td><td>Allow threshold features to be used
 <tr><td>hinge</td><td>h</td><td>boolean</td><td>true</td><td>Allow hinge features to be used
 <tr><td>addsamplestobackground</td><td>d</td><td>boolean</td><td>true</td><td>Add to the background any sample for which has a combination of environmental values that isn't already present in the background
 <tr><td>addallsamplestobackground</td><td></td><td>boolean</td><td>false</td><td>Add all samples to the background, even if they have combinations of environmental values that are already present in the background

@@ -53,9 +53,6 @@ public class ParamsPre extends Parameters {
     }
 
     boolean logistic() { return getString("outputformat").toLowerCase().equals("logistic"); }
-    boolean cloglog() { return getString("outputformat").toLowerCase().equals("cloglog"); }
-    String occurrenceProbabilityTransform() { return logistic() ? "Logistic" : "Cloglog"; }
-    boolean occurrenceProbability() { return logistic() || cloglog(); }
     boolean cumulative() { return getString("outputformat").toLowerCase().equals("cumulative"); }
     boolean allowpartialdata() { return getboolean("allowpartialdata"); }
 

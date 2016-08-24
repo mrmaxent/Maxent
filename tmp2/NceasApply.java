@@ -28,7 +28,7 @@ import java.util.*;
 // Assumes each sample maps feature names to doubles
 public class NceasApply {
     static String[] headers;
-    static String outputformat = "cloglog";
+    static boolean cumulative = true, logistic = true, odds=false;
 
     static Sample[] readSamples(String sampleFile) throws IOException {
 	final Csv csv = new Csv(sampleFile);
@@ -69,16 +69,19 @@ public class NceasApply {
 		FeaturedSpace X = new FeaturedSpace(gs, lambdaFile, true);
 		PrintWriter out = Utils.writer(outPrefix + species + ".csv");
 		double[][] raw2cum=null;
-		raw2cum = Project.readCumulativeIndex(Runner.raw2cumfile(lambdaFile));
+		if (!logistic)
+		    raw2cum = Project.readCumulativeIndex(Runner.raw2cumfile(lambdaFile));
 		out.println("dataset,siteid,pred");
 		double entropy = X.entropy;
 		for (int j=0; j<samples.length; j++) {
 		    double val = Math.exp(X.linearPredictor(samples[j]) - X.getLinearPredictorNormalizer()) / X.getDensityNormalizer();
-		    switch (outputformat) {
-		       case "cloglog": val = Project.cloglog(val, entropy); break;
-		       case "logistic": val = Project.logistic(val, entropy, 0.5); break;
-		       case "cumulative": val = Project.interpolateCumulative(raw2cum, val); break;
-		       default: 
+		    if (logistic && entropy!=-1) {
+			val = Project.logistic(val, entropy, 0.5);
+			if (odds) val = val/(1-val);
+		    }
+		    else if (cumulative)
+			val = Project.interpolateCumulative(raw2cum, val);
+		    else {
 			double max = raw2cum[0][raw2cum[0].length-1];
 			if (val > max) val = max;
 		    }

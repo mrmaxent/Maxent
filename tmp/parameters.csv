@@ -2,7 +2,7 @@ Parameter,Abbreviations,Display text,Values,Default,Level,Tooltip
 responseCurves,P,Create response curves,boolean,FALSE,CORE,<html>Create graphs showing how predicted relative probability of occurrence depends on the value of each environmental variable
 pictures,,Make pictures of predictions,boolean,TRUE,CORE,Create a .png image for each output grid
 jackknife,J,Do jackknife to measure variable importance,boolean,FALSE,CORE,"<html>Measure importance of each environmental variable by training with each environmental variable first omitted, then used in isolation"
-outputFormat,,Output format,string/Cloglog/Logistic/Cumulative/Raw,CLoglog,CORE,Representation of probabilities used in writing output grids.  See Help for details
+outputFormat,,Output format,string/Cloglog/Logistic/Cumulative/Raw,Logistic,CORE,Representation of probabilities used in writing output grids.  See Help for details
 outputFileType,,Output file type,string/asc/mxe/grd/bil,asc,CORE,<html>File format used for writing output grids
 outputDirectory,o,Output directory,directory,,CORE,Directory where outputs will be written.  This should be different from the environmental layers directory.
 projectionLayers,j,Projection layers directory/file,filedirectory,,CORE,<html>Location of an alternate set of environmental variables.  Maxent models will be projected onto these variables.<br>Can be a .csv file (in SWD format) or a directory containing one file per variable.<br>Multiple projection files/directories can be separated by commas.
@@ -31,7 +31,7 @@ responseCurvesExponent,,Show exponent in response curves,boolean,FALSE,EXPERIMEN
 linear,l,Linear features,boolean,TRUE,SPECIAL,Allow linear features to be used
 quadratic,q,Quadratic features,boolean,TRUE,SPECIAL,Allow quadratic features to be used
 product,p,Product features,boolean,TRUE,SPECIAL,Allow product features to be used
-threshold,,Threshold features,boolean,FALSE,SPECIAL,Allow threshold features to be used
+threshold,,Threshold features,boolean,TRUE,SPECIAL,Allow threshold features to be used
 hinge,h,Hinge features,boolean,TRUE,SPECIAL,Allow hinge features to be used
 polyhedral,,Polyhedral features,boolean,FALSE,HIDDEN,
 addSamplesToBackground,d,Add samples to background,boolean,TRUE,ADVANCED,Add to the background any sample for which has a combination of environmental values that isn't already present in the background

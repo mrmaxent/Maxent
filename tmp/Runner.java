@@ -519,9 +519,9 @@ public class Runner {
 		    //  }
 		    proj.entropy = entropy;
 		    if (gsfromfile)
-			proj.doProject(lambdafile, (GridSetFromFile) gs, filename);
+			proj.doProject(lambdafile, (GridSetFromFile) gs, filename, cumulative());
 		    else
-			proj.doProject(lambdafile, environmentalLayers(), filename, null);
+			proj.doProject(lambdafile, environmentalLayers(), filename, cumulative(), null);
 		    proj.entropy = -1.0;
 		    if (Utils.interrupt) return;
 		    writtenGrid = filename;
@@ -552,7 +552,7 @@ public class Runner {
 			//			if (params.biasIsBayesianPrior)
 			//			    proj.priorDistribution = gs.getGrid(new File(params.biasFile).getName());
 			proj.needLayers = allLayers;
-			proj.doProject(lambdafile, projectPrefix[i], ff.getPath(), is("writeClampGrid") ? ffclamp.getPath() : (String) null);
+			proj.doProject(lambdafile, projectPrefix[i], ff.getPath(), cumulative(), is("writeClampGrid") ? ffclamp.getPath() : (String) null);
 			if (Utils.interrupt) return;
 			projectedGrids.add("<a href = \"" + ff.getName() + "\">The model applied to the environmental layers in " + projectPrefix[i] + "</a>");
 			if (is("pictures") && !isFile) {
@@ -637,7 +637,7 @@ public class Runner {
 	    (Utils.getJarfileLocation().replaceAll("%20"," ") + System.getProperty("path.separator"));
 	int mem = (int) (Runtime.getRuntime().maxMemory()/1024/1024);
 	if (mem<500) mem=500;
-	out.println("java -mx" + mem + "m -cp \"" + jarfile + System.getProperty("java.class.path") + "\" density.Explain -l " + Utils.protectFileName(lambdafilename) + (params.cloglog()?" -c ":" ") + Utils.protectFileName(predfile.getAbsolutePath()) + " " + Utils.protectFileName(predvarsdir));
+	out.println("java -mx" + mem + "m -cp \"" + jarfile + System.getProperty("java.class.path") + "\" density.Explain -l " + Utils.protectFileName(lambdafilename) + " " + Utils.protectFileName(predfile.getAbsolutePath()) + " " + Utils.protectFileName(predvarsdir));
 	if (windows)
 	    out.println("@if errorlevel 1 pause");
 	out.close();
@@ -1859,7 +1859,7 @@ public class Runner {
 	PrintWriter out = new PrintWriter(raw2cumfile==null ?
 					  outstring :
 					  new FileWriter(raw2cumfile));
-	out.println("Raw value,Corresponding cumulative value,Corresponding "+params.occurrenceProbabilityTransform()+" value,Fractional area,Training omission,Test omission");
+	out.println("Raw value,Corresponding cumulative value,Corresponding "+params().occurrenceProbabilityTransform()+" value,Fractional area,Training omission,Test omission");
 	double[] thresh1 = new double[] {.000000001, .0000000025, .00000001, .000000025, .0000001, .00000025, .000001, .0000025, .00001, .000025, .00005, .0001, .00025, .0005, .001, .0025, .005, .01, .025, .05, 0.75, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.75}; // 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5};
 	double[] thresh = new double[thresh1.length + 393];
 	for (int i=0; i<thresh1.length; i++) thresh[i] = thresh1[i];

@@ -59,7 +59,7 @@ public class Runner {
 
     // common parameters
     boolean is(String s) { return params.getboolean(s); }
-    boolean occurrenceProbability() { return params.occurrenceProbability(); }
+    boolean logistic() { return params.logistic(); }
     boolean cumulative() { return params.cumulative(); }
     int replicates() { return params.getint("replicates"); }
     int replicates(String species) {
@@ -519,9 +519,9 @@ public class Runner {
 		    //  }
 		    proj.entropy = entropy;
 		    if (gsfromfile)
-			proj.doProject(lambdafile, (GridSetFromFile) gs, filename);
+			proj.doProject(lambdafile, (GridSetFromFile) gs, filename, cumulative(), false);
 		    else
-			proj.doProject(lambdafile, environmentalLayers(), filename, null);
+			proj.doProject(lambdafile, environmentalLayers(), filename, cumulative(), false, null);
 		    proj.entropy = -1.0;
 		    if (Utils.interrupt) return;
 		    writtenGrid = filename;
@@ -552,7 +552,7 @@ public class Runner {
 			//			if (params.biasIsBayesianPrior)
 			//			    proj.priorDistribution = gs.getGrid(new File(params.biasFile).getName());
 			proj.needLayers = allLayers;
-			proj.doProject(lambdafile, projectPrefix[i], ff.getPath(), is("writeClampGrid") ? ffclamp.getPath() : (String) null);
+			proj.doProject(lambdafile, projectPrefix[i], ff.getPath(), cumulative(), false, is("writeClampGrid") ? ffclamp.getPath() : (String) null);
 			if (Utils.interrupt) return;
 			projectedGrids.add("<a href = \"" + ff.getName() + "\">The model applied to the environmental layers in " + projectPrefix[i] + "</a>");
 			if (is("pictures") && !isFile) {
@@ -637,7 +637,7 @@ public class Runner {
 	    (Utils.getJarfileLocation().replaceAll("%20"," ") + System.getProperty("path.separator"));
 	int mem = (int) (Runtime.getRuntime().maxMemory()/1024/1024);
 	if (mem<500) mem=500;
-	out.println("java -mx" + mem + "m -cp \"" + jarfile + System.getProperty("java.class.path") + "\" density.Explain -l " + Utils.protectFileName(lambdafilename) + (params.cloglog()?" -c ":" ") + Utils.protectFileName(predfile.getAbsolutePath()) + " " + Utils.protectFileName(predvarsdir));
+	out.println("java -mx" + mem + "m -cp \"" + jarfile + System.getProperty("java.class.path") + "\" density.Explain -l " + Utils.protectFileName(lambdafilename) + " " + Utils.protectFileName(predfile.getAbsolutePath()) + " " + Utils.protectFileName(predvarsdir));
 	if (windows)
 	    out.println("@if errorlevel 1 pause");
 	out.close();
@@ -820,7 +820,7 @@ public class Runner {
 	if (exponent)
 	    htmlout.println("The (raw) Maxent model has the form exp(...)/constant, and the");
 	else htmlout.println("The ");
-	htmlout.println("curves show how the " + (exponent?"exponent":"predicted probability of presence") + " changes as each environmental variable is varied, keeping all other environmental variables at their average sample value. Click on a response curve to see a larger version.  Note that the curves can be hard to interpret if you have strongly correlated variables, as the model may depend on the correlations in ways that are not evident in the curves.  In other words, the curves show the marginal effect of changing exactly one variable, whereas the model may take advantage of sets of variables changing together.  The curves show the mean response of the " + nr + " replicate Maxent runs (red) and and the mean +/- one standard deviation (blue, two shades for categorical variables).<br><br>");
+	htmlout.println("curves show how the " + (exponent?"exponent":"logistic prediction") + " changes as each environmental variable is varied, keeping all other environmental variables at their average sample value. Click on a response curve to see a larger version.  Note that the curves can be hard to interpret if you have strongly correlated variables, as the model may depend on the correlations in ways that are not evident in the curves.  In other words, the curves show the marginal effect of changing exactly one variable, whereas the model may take advantage of sets of variables changing together.  The curves show the mean response of the " + nr + " replicate Maxent runs (red) and and the mean +/- one standard deviation (blue, two shades for categorical variables).<br><br>");
 	for (int version=0; version<2; version++) {
 	    if (version==1)
 		htmlout.println("<br><br>In contrast to the above marginal response curves, each of the following curves represents a different model, namely, a Maxent model created using only the corresponding variable.  These plots reflect the dependence of predicted suitability both on the selected variable and on dependencies induced by correlations between the selected variable and other variables.  They may be easier to interpret if there are strong correlations between variables.<br><br>");
@@ -852,7 +852,7 @@ public class Runner {
 		String plotfilename = new File(plotdir, species + "_" + varname + (version==1?"_only":"")).getPath();
 		new ResponsePlot().makeplot(xx, mean, stderr, iscategorical, varname,
 					    (exponent?"Log response":"Response") + " of " + species + " to " + varname,
-					    exponent?"Log Contribution to Raw Prediction":(params.getString("outputformat")+" output"),
+					    exponent?"Log Contribution to Raw Prediction":logistic()?"Logistic output (probability of presence)":cumulative()?"Cumulative output":"Raw output",
 					    plotfilename, min+(max-min)/12, max-(max-min)/12, params, exponent, is("writePlotData"));
 		String fname = new File(plotfilename).getName();
 		htmlout.println("<a href = \"plots/" + fname + ".png\"> <img src=\"plots/" + fname + "_thumb.png\"></a>");
@@ -1152,13 +1152,13 @@ public class Runner {
     String makePNG(Grid g, String fileName, Sample[] ss, Sample[] testSamples, boolean forcePlain, String tag) {
 	String newFileName = new File(new File(outDir(), "plots"), Utils.pngname(fileName)).getPath();
 	Display d = new Display(g);
-	if (!is("logScale") || occurrenceProbability() || forcePlain)
+	if (!is("logScale") || logistic() || forcePlain)
 	    d.setMode(Display.PLAIN);
 	else if (cumulative()) {
 	    d.minval = .00001;
 	    d.maxval = 100.0;
 	}
-	if (occurrenceProbability() || forcePlain) {
+	if (logistic() || forcePlain) {
 	    d.minval = 0.0;
 	    d.maxval = 1.0;
 	}
@@ -1419,7 +1419,7 @@ public class Runner {
 	    if (exponent)
 		out.println("The (raw) Maxent model has the form exp(...)/constant, and the");
 	    else out.println("The ");
-	    out.println("curves show how the " + (exponent?"exponent":"predicted probability of presence") + " changes as each environmental variable is varied, keeping all other environmental variables at their average sample value. Click on a response curve to see a larger version.  Note that the curves can be hard to interpret if you have strongly correlated variables, as the model may depend on the correlations in ways that are not evident in the curves.  In other words, the curves show the marginal effect of changing exactly one variable, whereas the model may take advantage of sets of variables changing together.<br><br>");
+	    out.println("curves show how the " + (exponent?"exponent":"logistic prediction") + " changes as each environmental variable is varied, keeping all other environmental variables at their average sample value. Click on a response curve to see a larger version.  Note that the curves can be hard to interpret if you have strongly correlated variables, as the model may depend on the correlations in ways that are not evident in the curves.  In other words, the curves show the marginal effect of changing exactly one variable, whereas the model may take advantage of sets of variables changing together.<br><br>");
 	}
 	for (int i=0; i<baseFeatures.length; i++) {
 	    if (!isTrueBaseFeature(baseFeatures[i])) 
@@ -1438,7 +1438,7 @@ public class Runner {
 	    try {
 		new ResponsePlot().makeplot(rpd[0], rpd[1], null, isCategorical[i], name,
 					    (exponent?"Log response":"Response") + " of " + theSpecies + " to " + name,
-					    exponent?"Log Contribution to Raw Prediction":(params.getString("outputformat")+" output"),
+					    exponent?"Log Contribution to Raw Prediction":logistic()?"Logistic output (probability of presence)":cumulative()?"Cumulative output":"Raw output",
 					    plotfilename, min, max, params, exponent,
 					    is("writePlotData") || (replicates()>1));
 	    } catch (IOException e) {
@@ -1859,7 +1859,7 @@ public class Runner {
 	PrintWriter out = new PrintWriter(raw2cumfile==null ?
 					  outstring :
 					  new FileWriter(raw2cumfile));
-	out.println("Raw value,Corresponding cumulative value,Corresponding "+params.occurrenceProbabilityTransform()+" value,Fractional area,Training omission,Test omission");
+	out.println("Raw value,Corresponding cumulative value,Corresponding logistic value,Fractional area,Training omission,Test omission");
 	double[] thresh1 = new double[] {.000000001, .0000000025, .00000001, .000000025, .0000001, .00000025, .000001, .0000025, .00001, .000025, .00005, .0001, .00025, .0005, .001, .0025, .005, .01, .025, .05, 0.75, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.75}; // 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5};
 	double[] thresh = new double[thresh1.length + 393];
 	for (int i=0; i<thresh1.length; i++) thresh[i] = thresh1[i];
@@ -1870,7 +1870,7 @@ public class Runner {
 
 	// run through all weights
 	int[] count = new int[3];
-	double threshold = sweights[0]-1, cumulative=0.0, occurrenceProbability=0.0;
+	double threshold = sweights[0]-1, cumulative=0.0, logistic=0.0;
 	double expent = Math.exp(entropy);
 	NumberFormat tnf = NumberFormat.getNumberInstance(Locale.US);
 	DecimalFormat df = (DecimalFormat)tnf;
@@ -1887,8 +1887,8 @@ public class Runner {
 		double trainomission = count[1]/(double) a.size();
 		double testomission = hastest ? count[2]/(double) testvals.length : 0;
 		cumulative = interpolate(sweights[i], count[0], weights, cweights);
-		occurrenceProbability = proj.occurrenceProbability(threshold, entropy);
-		double[] attrs = new double[] { area, trainomission, testomission, cumulative, occurrenceProbability, threshold };
+		logistic = proj.logistic(threshold, entropy);
+		double[] attrs = new double[] { area, trainomission, testomission, cumulative, logistic, threshold };
 		for (int j=0; j<fixed.length; j++)
 		    recordThreshold(thresholdinfo[j], (cumulative >= thresholdinfo[j].cumulative) ? 0 : 1, attrs, false);
 		for (int j=3; j<5; j++)
@@ -1903,10 +1903,10 @@ public class Runner {
 		}
 
 		if (is("plots")) 
-		    addPlotPoints(cumulative, area, trainomission, testomission, hastest);
+		    addPlotPoints(cumulative, area, trainomission, testomission, hastest, logistic);
 
 		if (current < thresh.length && cumulative >= thresh[current]) {
-		    out.println(quotedCsv(new String[] { df.format(sweights[i]).replaceAll(",","."), nf.format(cumulative), nf.format(occurrenceProbability), nf.format(area), nf.format(trainomission), nf.format(testomission) }));
+		    out.println(quotedCsv(new String[] { df.format(sweights[i]).replaceAll(",","."), nf.format(cumulative), nf.format(logistic), nf.format(area), nf.format(trainomission), nf.format(testomission) }));
 		    rr.add(sweights[i]);
 		    cc.add(cumulative);
 		    while (current < thresh.length && cumulative > thresh[current])
@@ -1930,20 +1930,20 @@ public class Runner {
 
 	if (is("writeBackgroundPredictions")) {
 	    PrintWriter bgout = Utils.writer(raw2cumfile.replaceAll("omission.csv$", "backgroundPredictions.csv"));
-	    bgout.println("x,y,raw,cumulative,"+params.occurrenceProbabilityTransform());
+	    bgout.println("x,y,raw,cumulative,logistic");
 	    for (int i=0; i<origweights.length; i++) {
 		// there may be presences added at end of background, 
 		// but their coords are not currently recorded in X
 		if (i>=X.numCoords()) break;
 		cumulative = interpolate(origweights[i], -1, weights, cweights);
-		occurrenceProbability = proj.occurrenceProbability(origweights[i], entropy);
-		bgout.println(quotedCsv(new String[] { ""+X.getX(i), ""+X.getY(i), df.format(origweights[i]).replaceAll(",","."), nf.format(cumulative), nf.format(occurrenceProbability) }));
+		logistic = proj.logistic(origweights[i], entropy);
+		bgout.println(quotedCsv(new String[] { ""+X.getX(i), ""+X.getY(i), df.format(origweights[i]).replaceAll(",","."), nf.format(cumulative), nf.format(logistic) }));
 	    }
 	    bgout.close();
 	}
 
 	if (is("plots")) {
-	    addPlotPoints(100, 0.0, 1.0, 1.0, hastest);
+	    addPlotPoints(100, 0.0, 1.0, 1.0, hastest, 1.0);
 	    writePlots();
 	}
 
@@ -1956,15 +1956,15 @@ public class Runner {
 	try {
 	    double[][] raw2cum = Project.readCumulativeIndex(raw2cumfile);
 	    PrintWriter sout= Utils.writer(file);
-	    sout.println("X,Y,Test or train,Raw prediction,Cumulative prediction,"+params.occurrenceProbabilityTransform()+" prediction");
+	    sout.println("X,Y,Test or train,Raw prediction,Cumulative prediction,Logistic prediction");
 	    for (int i=0; i<X.numSamples; i++) {
 		if (!hasAllData(X.samples[i], baseFeatures)) continue;
 		// can't use trainvals[i] as array is sorted
 		double raw = X.getDensity(X.samples[i]) / X.densityNormalizer;
-		sout.println(X.samples[i].lon + "," + X.samples[i].lat + ",train," + raw + "," + Project.interpolateCumulative(raw2cum, raw) + "," + proj.occurrenceProbability(raw, entropy));
+		sout.println(X.samples[i].lon + "," + X.samples[i].lat + ",train," + raw + "," + Project.interpolateCumulative(raw2cum, raw) + "," + proj.logistic(raw, entropy));
 	    }
 	    for (int i=0; i<testvals.length; i++)
-		sout.println(X.testSamples[i].lon + "," + X.testSamples[i].lat + ",test," + testvals[i] + "," + Project.interpolateCumulative(raw2cum, testvals[i]) + "," + proj.occurrenceProbability(testvals[i], entropy));
+		sout.println(X.testSamples[i].lon + "," + X.testSamples[i].lat + ",test," + testvals[i] + "," + Project.interpolateCumulative(raw2cum, testvals[i]) + "," + proj.logistic(testvals[i], entropy));
 	    sout.close();
 	} catch (IOException e) {
 	    popupError("Error writing sample predictions file", e);
@@ -2009,7 +2009,7 @@ public class Runner {
     class Thresholdinfo {
 	String meaning;
 	double threshold=-1, value=1, area=-1, trainomission=-1;
-	double testomission=-1, cumulative=-1, occurrenceProbability = -1;
+	double testomission=-1, cumulative=-1, logistic = -1;
 	boolean started=false;
 	public Thresholdinfo(String m) { meaning = m; }
 	public Thresholdinfo(String m, double t, double v, double a, double traino, double testo, double c) {
@@ -2026,7 +2026,7 @@ public class Runner {
 	recordThreshold(thr, val, attrs, true); 
     }
 
-    int TAREA=0, TTRAINO=1, TTESTO=2, TCUM=3, TOCCPROB=4, TTHRESH=5;
+    int TAREA=0, TTRAINO=1, TTESTO=2, TCUM=3, TLOGISTIC=4, TTHRESH=5;
     void recordThreshold(Thresholdinfo thr, double val, double[] attrs, boolean init) {
 	if ((init && !thr.started) || val < thr.value) {
 	    thr.value = val;
@@ -2035,7 +2035,7 @@ public class Runner {
 	    thr.trainomission = attrs[TTRAINO];
 	    thr.testomission = attrs[TTESTO];
 	    thr.cumulative = attrs[TCUM];
-	    thr.occurrenceProbability = attrs[TOCCPROB];
+	    thr.logistic = attrs[TLOGISTIC];
 	    thr.started = true;
 	}
     }
@@ -2053,7 +2053,7 @@ public class Runner {
 	boolean hastest = (numTestSamples > 0);
 	htmlputs("Some common thresholds and corresponding omission rates are as follows.  If test data are available, binomial probabilities are calculated exactly if the number of test samples is at most 25, otherwise using a normal approximation to the binomial.  These are 1-sided p-values for the null hypothesis that test points are predicted no better than by a random prediction with the same fractional predicted area.  The \"Balance\" threshold minimizes 6 * training omission rate + .04 * cumulative threshold + 1.6 * fractional predicted area.");
 	htmlputsn("<br><table border cols=" + (hastest?6:4) + " cellpadding=3>");
-	htmlputsn("<tr><th>Cumulative threshold</th><th>"+params.occurrenceProbabilityTransform()+" threshold</th><th>Description</th><th>Fractional predicted area</th><th>Training omission rate</th>" + (hastest?"<th>Test omission rate</th><th>P-value</th>" : ""));
+	htmlputsn("<tr><th>Cumulative threshold</th><th>Logistic threshold</th><th>Description</th><th>Fractional predicted area</th><th>Training omission rate</th>" + (hastest?"<th>Test omission rate</th><th>P-value</th>" : ""));
     
 	NumberFormat tnf = NumberFormat.getNumberInstance(Locale.US);
 	DecimalFormat df = (DecimalFormat)tnf;
@@ -2067,7 +2067,7 @@ public class Runner {
 		name += " " + t.cumulative;
 	    if (t.threshold == -1) {
 		Utils.echoln("Leaving out " + t.meaning + " from threshold table, as uninitialized");
-		for (String s: new String[] {"cumulative threshold", params.occurrenceProbabilityTransform()+" threshold", "area", "training omission"} )
+		for (String s: new String[] {"cumulative threshold", "logistic threshold", "area", "training omission"} )
 		    results.print(name + " " + s, "na");
 		if (hastest) 
 		    for (String s: new String[] {"test omission", "binomial probability"})
@@ -2080,9 +2080,9 @@ public class Runner {
 		    binomial(numTestSamples, t.area, 1-t.testomission) :
 		    exactBinomial((int) Math.round((1-t.testomission) * numTestSamples), numTestSamples, t.area);
 	    }
-	    htmlputsn("<tr align=center><td>" + nf.format(t.cumulative) + "</td><td>" + nf.format(t.occurrenceProbability) + "</td><td>" + t.meaning + "</td><td>" + nf.format(t.area) + "</td><td>" + nf.format(t.trainomission) + "</td>" + (hastest?"<td>" + nf.format(t.testomission) + "</td><td>" + df.format(testbinomial) + "</td>" : ""));
+	    htmlputsn("<tr align=center><td>" + nf.format(t.cumulative) + "</td><td>" + nf.format(t.logistic) + "</td><td>" + t.meaning + "</td><td>" + nf.format(t.area) + "</td><td>" + nf.format(t.trainomission) + "</td>" + (hastest?"<td>" + nf.format(t.testomission) + "</td><td>" + df.format(testbinomial) + "</td>" : ""));
 	    results.print(name + " cumulative threshold", t.cumulative);
-	    results.print(name + " " + params.occurrenceProbabilityTransform() + " threshold", t.occurrenceProbability);
+	    results.print(name + " logistic threshold", t.logistic);
 	    results.print(name + " area", t.area);
 	    results.print(name + " training omission", t.trainomission);
 	    if (hastest) {
@@ -2090,7 +2090,7 @@ public class Runner {
 		results.print(name + " binomial probability", df.format(testbinomial));
 	    }
 	    if (t.meaning.toLowerCase().equals(params.getString("applyThresholdRule")))
-		applyThresholdValue = occurrenceProbability() ? t.occurrenceProbability : 
+		applyThresholdValue = logistic() ? t.logistic : 
 		    cumulative() ? t.cumulative : -1;
 	}
 	if (applyThresholdValue==-1 && !params.getString("applyThresholdRule").equals(""))
@@ -2371,7 +2371,7 @@ public class Runner {
 		}
 	}
 	writer.print("Entropy", entropy);
-	writer.print("Prevalence (average probability of presence over background sites)", prevalence);
+	writer.print("Prevalence (average of logistic output over background sites)", prevalence);
 	writer.println();
     }
 
@@ -2421,7 +2421,7 @@ public class Runner {
 
     }
 
-    void addPlotPoints(double cumulative, double predarea, double trainomission, double testomission, boolean hastest) {
+    void addPlotPoints(double cumulative, double predarea, double trainomission, double testomission, boolean hastest, double logistic) {
 	plot.addPoint(0, cumulative, predarea, true);
 	plot.addPoint(1, cumulative, trainomission, true);
 	plot2.addPoint(0, predarea, 1-trainomission, true);

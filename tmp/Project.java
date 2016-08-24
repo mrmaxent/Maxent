@@ -327,7 +327,7 @@ public class Project {
 	double v = raw * Math.exp(entropy);
 	return dp*v / ((1-dp)+dp*v);
     }
-    static double cloglog(double raw, double entropy) {
+    double cloglog(double raw, double entropy) {
 	return 1-Math.exp(-raw * Math.exp(entropy));
     }
     double occurrenceProbability(double raw, double entropy) {

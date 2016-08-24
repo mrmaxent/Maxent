@@ -72,7 +72,7 @@ public class Params extends ParamsPre {
    /**
    * Set value of <i>outputformat</i> parameter: Representation of probabilities used in writing output grids.  See Help for details
    * <p>
-   * Default value is logistic.
+   * Default value is cloglog.
    * @param value the new value
    */
    public void setOutputformat(String value) { setValue("outputformat", value); }
@@ -408,7 +408,7 @@ public class Params extends ParamsPre {
    /**
    * Set value of <i>threshold</i> parameter: Allow threshold features to be used
    * <p>
-   * Default value is true.
+   * Default value is false.
    * @param value the new value
    */
    public void setThreshold(boolean value) { setValue("threshold", value); }

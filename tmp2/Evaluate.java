@@ -58,6 +58,7 @@ public class Evaluate {
 
     /**
      * Evaluate the Maxent model on the given environmental variable values.
+     * Produces output in Maxent's logistic format.
      * This method should only be called after all variables have been assigned
      * values.
      * @return The model output value

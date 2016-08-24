@@ -9,7 +9,7 @@ compile:
 	zip maxentdoc.zip html/density/Runner.html html/density/Params.html html/density/ParamsPre.html html/density/Evaluate.html
 
 distribution: compile
-	jar cvfm maxent.jar density/mc.mf density/*.class density/*.html gnu/getopt/* gui/layouts/*.class com/mindprod/ledatastream/LEData*.class density/tools/*.class ptolemy/plot/*.class density/parameters.csv
+	jar cvfm maxent.jar density/mc.mf density/*.class density/*.html gnu/getopt/* gui/layouts/*.class com/macfaq/io/LittleEndian*.class density/tools/*.class ptolemy/plot/*.class density/parameters.csv
 	zip maxent.zip maxent.jar readme.txt maxent.bat
 
 clean:
