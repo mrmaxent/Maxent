@@ -24,6 +24,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 package density;
 import java.io.*;
 import java.util.*;
+import gnu.getopt.*;
 
 // Assumes each sample maps feature names to doubles
 public class NceasApply {
@@ -54,14 +55,25 @@ public class NceasApply {
     }
 
     public static void main(String[] args) {
+	String usage = "Usage: NceasApply [-c] [-l] lambdaFile [lambdaFile2...] sampleFile outPrefix";
 	if (args.length<3) {
-	    System.out.println("Usage: NceasApply lambdaFile [lambdaFile2...] sampleFile outPrefix");
+	    System.out.println(usage);
 	    System.exit(0);
+	}
+	int c;
+	Getopt g = new Getopt("NceasApply", args, "lrc");
+	while ((c=g.getopt()) != -1) {
+	    switch(c) {
+	    case 'c': outputformat = "cumulative"; break;
+	    case 'l': outputformat = "logistic"; break;
+	    case 'r': outputformat = "raw"; break;
+	    default: System.out.println(usage); System.exit(0);
+	    }
 	}
 	try {
 	    String sampleFile = args[args.length-2], outPrefix = args[args.length-1];
 	    Sample[] samples = readSamples(sampleFile);
-	    for (int i=0; i<args.length-2; i++) {
+	    for (int i=g.getOptind(); i<args.length-2; i++) {
 		String lambdaFile = args[i];
 		System.out.println(lambdaFile);
 		String species = new File(lambdaFile).getName().replaceAll(".lambdas","").toLowerCase();
