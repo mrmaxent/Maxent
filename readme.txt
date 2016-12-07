@@ -3,25 +3,22 @@ Maximum Entropy Modeling of Species Geographic Distributions
 
 INSTRUCTIONS FOR DOWNLOADING AND GETTING STARTED
 
-Miro Dudik          (mdudik@cs.princeton.edu)
-Steven Phillips     (phillips@research.att.com)
-Rob Schapire        (schapire@cs.princeton.edu)
+Miro Dudik          (mdudik@microsoft.com)
+Steven Phillips     (mrmaxent@gmail.com)
+Rob Schapire        (schapire@microsoft.com)
 
-Version 3.3.3k, October 2011
+Version 3.4, December 2016
 
 This file outlines the steps you should take to begin using maxent to
 model species geographic distributions.  To download the program, or
 for background on maxent and its application to species distribution
-modeling, please see http://www.cs.princeton.edu/~schapire/maxent.
+modeling, please see 
+http://biodiversityinformatics.amnh.org/open_source/maxent.
 
 
 Terms and Conditions
 --------------------
-This software may be freely downloaded and used for all educational
-and research activities.  This software may not be used for any
-commercial or for-profit purposes.  The software is provided "as-is",
-and does not come with any warranty or guarantee of any kind.  The
-software may not be further distributed.
+This software is distributed under the MIT License.
 
 
 Downloading the Software
@@ -121,6 +118,11 @@ click on the maxent.bat file instead.  If this is not the problem,
 click on the "help" button for more advice.
 
 
+Main Changes in Version 3.4:
+   Added cloglog output transformation, and made it the default output format
+   Threshold features are no longer used in default settings
+
+
 Main changes in Version 3.3.3:
 -----------------------------
    Added permutation importance to table of variable contributions
@@ -129,6 +131,7 @@ Main changes in Version 3.3.3:
    Explain tool integrated into html output
    Updated tutorial
    Bug fixes
+
 
 Main changes in Version 3.3.2:
 -----------------------------
@@ -140,7 +143,6 @@ Main changes in Version 3.3.2:
   Updated tutorial, including Novel and Explain tools
   A more detailed API for calling Maxent from other Java code
   
-
 
 Main changes in Version 3.3.0:
 -----------------------------
@@ -173,7 +175,6 @@ Main changes in Version 3.2.18:
   Fixed bug that sometimes caused '?' values due to arithmetic
     overflow when computing clamping grids
   Response curve thumbnails now all use the same 0-1 y-axis scale
-  
 
 
 What was new in Version 3.2.1:
