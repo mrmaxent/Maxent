@@ -1,6 +1,5 @@
-# class files, jar files, zip files, emacs backup files, semantic cache and javadoc files
+# class files, zip files, emacs backup files, semantic cache and javadoc files
 *.class
-*.jar
 *.zip
 *~
 semantic.cache
