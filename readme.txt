@@ -7,7 +7,7 @@ Miro Dudik          (mdudik@microsoft.com)
 Steven Phillips     (mrmaxent@gmail.com)
 Rob Schapire        (schapire@microsoft.com)
 
-Version 3.4.1, December 2016
+Version 3.4.1, April 2017
 
 This file outlines the steps you should take to begin using maxent to
 model species geographic distributions.  To download the program, or

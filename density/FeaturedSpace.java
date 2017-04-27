@@ -465,7 +465,7 @@ public class FeaturedSpace {
     }
     
     SampleInfo biasInfo = null;
-    public static double minDeviation;
+    public static double minDeviation = 0.001;
     void setSampleExpectations() {
 	Utils.echoln(numSamples + " samples");
 	biasInfo = getDividedSampleInfo(new ConstFeature(1.0,biasDiv.n), biasDiv);
