@@ -7,7 +7,7 @@ Miro Dudik          (mdudik@microsoft.com)
 Steven Phillips     (mrmaxent@gmail.com)
 Rob Schapire        (schapire@microsoft.com)
 
-Version 3.4.0, December 2016
+Version 3.4.1, December 2016
 
 This file outlines the steps you should take to begin using maxent to
 model species geographic distributions.  To download the program, or
@@ -118,7 +118,13 @@ click on the maxent.bat file instead.  If this is not the problem,
 click on the "help" button for more advice.
 
 
+Main Changes in Version 3.4.1:
+-----------------------------
+   Fixed bug that caused regularization multiplier to be have increasing effect over multiple runs
+
+
 Main Changes in Version 3.4.0:
+-----------------------------
    Added cloglog output transformation, and made it the default output format
    Threshold features are no longer used in default settings
 

@@ -294,6 +294,7 @@ public class FeaturedSpace {
 	this.samples = samples;
 	//	this.doClamp = doClamp;
 	numPoints = numPointsForNormalizer = (f.length==0) ? 0 : f[0].n;
+	minDeviation = 0.001;	
 	if (params != null)
 	    minDeviation *= params.getBetamultiplier();
 
@@ -464,8 +465,7 @@ public class FeaturedSpace {
     }
     
     SampleInfo biasInfo = null;
-    public static double minDeviation = 0.001;
-    // better on NCEAS:  public static double minDeviation = 0.001;
+    public static double minDeviation;
     void setSampleExpectations() {
 	Utils.echoln(numSamples + " samples");
 	biasInfo = getDividedSampleInfo(new ConstFeature(1.0,biasDiv.n), biasDiv);

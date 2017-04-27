@@ -1,10 +1,11 @@
-# class files, zip files, emacs backup files, semantic cache and javadoc files
+# class files, zip files, emacs backup files, semantic cache and javadoc files, maxent.jar
 *.class
 *.zip
 *~
 semantic.cache
 html/
 help.html
+maxent.jar
 
 # Windows image file caches
 Thumbs.db
