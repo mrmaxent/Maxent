@@ -291,6 +291,7 @@ public class Project {
 		}
 
 		public float eval(int r, int c) {
+		    doClamp = is("doClamp");
 		    double pred = predclamp = pred(r, c, true);
 		    if (doClamp) {
 			doClamp = false;
