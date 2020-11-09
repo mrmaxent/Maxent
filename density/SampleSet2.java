@@ -162,12 +162,12 @@ public class SampleSet2 extends SampleSet {
 		    Sample s = new Sample(-1, r, c, y, x, spid, null);
 		    
 		    int goodvals = 0;
-		    float[] data = new float[n];
+		    double[] data = new double[n];
 		    for (int j=0; j<n; j++) {
 			int idx = layerToColumn[j];
 			data[j] = NODATA_value;
 			if (idx!=-1 && idx<fields.length && !fields[SampleSet.firstEnvVar+idx].trim().equals("")) 
-			    data[j] = Float.parseFloat(fields[SampleSet.firstEnvVar+idx]);
+			    data[j] = Double.parseDouble(fields[SampleSet.firstEnvVar+idx]);
 			if (data[j] == NODATA_value && idx!=-1) {
 			    warnPartialData(x,y,sampleFileName,layers[j].name);
                             if (!params.allowpartialdata())
@@ -204,7 +204,7 @@ public class SampleSet2 extends SampleSet {
     public void createMaps() {
 	Sample[] s = getSamples();
 	for (int i=0; i<s.length; i++) {
-	    float[] data = (float[]) datamap.get(s[i]);
+	    double[] data = (double[]) datamap.get(s[i]);
 	    HashMap map = new HashMap();
 	    for (int j=0; j<n; j++)
 		map.put(layers[j].getName(), (data[j]==SampleSet.NODATA_value) ? null : new Double(data[j]));
