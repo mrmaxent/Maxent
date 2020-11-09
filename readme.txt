@@ -7,7 +7,7 @@ Miro Dudik          (mdudik@microsoft.com)
 Steven Phillips     (mrmaxent@gmail.com)
 Rob Schapire        (schapire@microsoft.com)
 
-Version 3.4.2, April 2017
+Version 3.4.3, November 2020
 
 This file outlines the steps you should take to begin using maxent to
 model species geographic distributions.  To download the program, or
@@ -117,6 +117,11 @@ may be because you are clicking on the maxent.jar file.  You need to
 click on the maxent.bat file instead.  If this is not the problem,
 click on the "help" button for more advice.
 
+
+Main Changes in Version 3.4.3:
+-----------------------------
+   Fixed a bug that was causing abrupt changes in response curves for some floating -point predictor variables,
+     due to the "add samples to background" option not adding all samples for floating-point predictors.
 
 Main Changes in Version 3.4.2:
 -----------------------------
