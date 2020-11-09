@@ -24,16 +24,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 package density;
 
 class CachedFeature extends Feature {
-    float[] vals=null;
+    double[] vals=null;
     Feature f;
 
     public CachedFeature(Feature f) {
 	this.f = f;
 	name = f.name;
 	n = f.n;
-	vals = new float[n];
+	vals = new double[n];
 	for (int p=0; p<n; p++)
-	    vals[p] = (float) f.eval(p);
+	    vals[p] = f.eval(p);
     }
 
     public double eval(int p) { return vals[p]; }

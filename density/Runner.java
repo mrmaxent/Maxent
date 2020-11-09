@@ -1238,14 +1238,14 @@ public class Runner {
 	double[] backgroundHash = new double[f[0].n];
 	for (int i=0; i<f[0].n; i++)
 	    for (int j=0; j<f.length; j++) 
-		backgroundHash[i] += rnd[j] * (float) f[j].eval(i);
+		backgroundHash[i] += rnd[j] * f[j].eval(i);
 	Arrays.sort(backgroundHash);
 	ArrayList samplesToAdda = new ArrayList();
 	for (int i=0; i<ss.length; i++) {
 	    double r = 0.0;
 	    for (int j=0; j<f.length; j++)
 		if (f[j].hasData(ss[i]))
-		    r += rnd[j] * (float) f[j].eval(ss[i]);
+		    r += rnd[j] * f[j].eval(ss[i]);
 	    if (is("addAllSamplesToBackground") || Arrays.binarySearch(backgroundHash, r) < 0)  // not found
 		samplesToAdda.add(ss[i]);
 	}

@@ -32,7 +32,7 @@ import java.util.prefs.Preferences;
 
 public class Utils {
 
-    static String version = "3.4.1";
+    static String version = "3.4.3";
     static boolean interrupt=false, warnings=true;
     public static boolean verbose=false, visible=true;
     static JFrame topLevelFrame = null;
