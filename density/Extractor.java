@@ -40,17 +40,17 @@ public class Extractor extends GridSet {
 
     public class Rc {
 	public int r, c;
-	public float[] vals;
+	public double[] vals;
 	boolean isTrain;
 	Sample sample;
 	public Rc(int r, int c, Sample s, int n, boolean isTrain) { 
 	    this.r = r; 
 	    this.c = c; 
 	    sample = s;
-	    vals = new float[n];
+	    vals = new double[n];
 	    this.isTrain = isTrain;
 	}
-	public Rc(int r, int c, float[] vals) {
+	public Rc(int r, int c, double[] vals) {
 	    this.r = r;
 	    this.c = c;
 	    this.vals = vals;
