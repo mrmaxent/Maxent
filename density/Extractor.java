@@ -302,7 +302,7 @@ public class Extractor extends GridSet {
 	SampleSet2 ss = rc.isTrain?train:test;
 	boolean[] need = rc.isTrain?trainNeedsGrid:testNeedsGrid;
 	Sample s = rc.sample;
-	float[] data = (float[]) ss.datamap.get(s);
+	double[] data = (double[]) ss.datamap.get(s);
 	boolean warned = false;
 	int cntmissing = 0;
 	for (int j=0; j<ngrids; j++) {
