@@ -4,6 +4,7 @@ compile:
 	java density.ParamsPre typesafe > density/Params.java
 	javac -g density/*.java density/tools/*.java
 	java density.Params density/*.java
+	javac -g ptolemy/plot/*.java
 	cat density/help.html.pre > density/help.html; java density.Params write >> density/help.html; echo "</blockquote><br></body></html>" >> density/help.html
 	javadoc -d html density/Runner.java density/Params.java density/ParamsPre.java density/Evaluate.java
 	zip maxentdoc.zip html/density/Runner.html html/density/Params.html html/density/ParamsPre.html html/density/Evaluate.html
