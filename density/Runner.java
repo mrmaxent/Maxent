@@ -1974,10 +1974,10 @@ public class Runner {
     }
     static String quotedCsv(String[] s) {
 	if (s==null || s.length==0) return "";
-	String result = quote(s[0]);
+	StringBuilder result = new StringBuilder(quote(s[0]));
 	for (int i=1; i<s.length; i++)
-	    result += "," + quote(s[i]);
-	return result;
+	    result.append(",").append(quote(s[i]));
+	return result.toString();
     }
 
     // given: x > raw[i-1], i in range 0..raw.length
