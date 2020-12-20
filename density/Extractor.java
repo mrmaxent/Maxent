@@ -182,7 +182,7 @@ public class Extractor extends GridSet {
 	    return;
 	}
 	features = new Feature[ngrids];
-	final float[][] vals = new float[numBackground][ngrids];
+	final double[][] vals = new double[numBackground][ngrids];
 	int c=0;
 	for (int i=0; i<numBackground; i++)
 	    vals[c++] = randextract[i].vals;
@@ -245,7 +245,7 @@ public class Extractor extends GridSet {
 	int sample=0;
 	int chosen=0;
 	long seen=0;
-	float[] vals = new float[ngrids];
+	double[] vals = new double[ngrids];
 	boolean[] hasData = new boolean[ngrids];
 	for (int r=0; r<nr; r++) {
 	    Utils.reportProgress((r*100)/(double)nr);
@@ -271,14 +271,14 @@ public class Extractor extends GridSet {
 		    seen++;
 		    if (chosen<n)
 			randextract[chosen++] = 
-			    new Rc(r,c,(float[]) vals.clone());
+			    new Rc(r,c,(double[]) vals.clone());
 		    else {
 			long rnd = (seen < Integer.MAX_VALUE) ?
 			    Utils.generator.nextInt((int) seen) :
 			    Utils.generator.nextLong() % seen;
 			if(rnd < n)
 			    randextract[(int) rnd] =
-				new Rc(r,c,(float[]) vals.clone());
+				new Rc(r,c,(double[]) vals.clone());
 		    }
 		}
 	    }
