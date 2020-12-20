@@ -29,12 +29,10 @@ package density;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.*;
 
 import javax.imageio.*;
 import java.io.*;
-import gnu.getopt.*;
 import java.util.*;
 import ptolemy.plot.*;
 import java.text.*;
@@ -48,7 +46,7 @@ public class Runner {
     GUI gui=null;
     String theSpecies;
     NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
-    ArrayList projectedGrids;
+    ArrayList<String> projectedGrids;
     String writtenGrid;
     double aucmax, applyThresholdValue;
     boolean samplesAddedToFeatures;
@@ -114,26 +112,26 @@ public class Runner {
     Layer[] allLayers=null;
 
     Layer[] trueFeatureLayers() {
-	ArrayList result = new ArrayList();
+	ArrayList<Layer> result = new ArrayList<>();
 	for (int i=0; i<allLayers.length; i++) {
 	    int type=allLayers[i].getType();
 	    if (type==Layer.CONT || type==Layer.CAT)
 		result.add(allLayers[i]);
 	}
-	return (Layer[]) result.toArray(new Layer[0]);
+	return result.toArray(new Layer[0]);
     }
 
-    boolean isTrueBaseFeature(Feature f) {
+    static boolean isTrueBaseFeature(Feature f) {
 	int type=f.type();
 	return type==Feature.L_CONT || type==Feature.L_CAT;
     }
 
     Feature[] getTrueBaseFeatures(Feature[] f) {
-	ArrayList result=new ArrayList();
+	ArrayList<Feature> result=new ArrayList<>();
 	for (int i=0; i<f.length; i++)
 	    if (isTrueBaseFeature(f[i]))
 		result.add(f[i]);
-	return (Feature []) result.toArray(new Feature[0]);
+	return result.toArray(new Feature[0]);
     }
     
     boolean gridsFromFile() {
@@ -146,15 +144,15 @@ public class Runner {
 	String[] layers=params.layers;
 	String[] layerTypes=params.layerTypes;
 	GridSet result=null;
-	ArrayList allLayersList = new ArrayList();
+	ArrayList<Layer> allLayersList = new ArrayList<Layer>();
 
 	for (int i=0; i<layers.length; i++) {
 	    Layer layer = new Layer(layers[i],layerTypes[i]);
 	    allLayersList.add(layer);
 	}
 	try {
-	    ArrayList full = new ArrayList();
-	    ArrayList fileLayersList = new ArrayList();
+	    ArrayList<String> full = new ArrayList<String>();
+	    ArrayList<Layer> fileLayersList = new ArrayList<>();
 
 	    for (int i=0; i<layers.length; i++) {
 		Layer layer = new Layer(layers[i],layerTypes[i]);
@@ -179,9 +177,9 @@ public class Runner {
 		}
 	    }
 
-	    String[] fileNames = (String[]) full.toArray(new String[0]);
-	    Layer[] fileLayers = (Layer[]) fileLayersList.toArray(new Layer[0]);
-	    allLayers = (Layer[]) allLayersList.toArray(new Layer[0]);
+	    String[] fileNames = full.toArray(new String[0]);
+	    Layer[] fileLayers = fileLayersList.toArray(new Layer[0]);
+	    allLayers = allLayersList.toArray(new Layer[0]);
 
 	    String[] selectSpecies = params.species;
 	    if (isFile) {
@@ -242,8 +240,6 @@ public class Runner {
      * Start a run, as if the "Run" button was pressed
      */
     public synchronized void start() {
-	int j;
-
 	Utils.applyStaticParams(params);
 	if (params.layers==null)
 	    params.setSelections();
@@ -344,7 +340,7 @@ public class Runner {
 	}
 
 	sampleSet=sampleSet2;
-	speciesCount = new HashMap();
+	speciesCount = new HashMap<>();
 	if (replicates()>1 && !is("manualReplicates")) {
 	    if (cv()) {
 		for (String s: sampleSet.getNames())
@@ -353,7 +349,7 @@ public class Runner {
 	    } 
 	    else
 		sampleSet.replicate(replicates(), bootstrap());
-	    ArrayList<String> torun = new ArrayList();
+	    ArrayList<String> torun = new ArrayList<>();
 	    for (String s: sampleSet.getNames())
 		if (s.matches(".*_[0-9]+$"))
 		    torun.add(s);
@@ -361,7 +357,6 @@ public class Runner {
 	    params.species = torun.toArray(new String[0]);
 	}
 	if (testSamplesFile().equals("") && params.getint("randomTestPoints")!=0) {
-	    SampleSet train=null;
 	    if (!is("randomseed")) Utils.generator = new Random(11111);
 	    testSampleSet = 
 		sampleSet.randomSample(params.getint("randomTestPoints"));
@@ -502,8 +497,10 @@ public class Runner {
 
 	    boolean explain = true;
 	    for (String s: res.featureTypes)
-		if (s.equals("product"))
-		    explain = false;
+		    if (s.equals("product")) {
+			    explain = false;
+			    break;
+		    }
 	    startedPictureHtmlSection = false;
 	    if (is("outputGrids")) {
 		String filename = gsfromfile ? 
@@ -537,7 +534,7 @@ public class Runner {
 	    }
 		    
 	    if (Utils.interrupt) return;
-	    projectedGrids = new ArrayList();
+	    projectedGrids = new ArrayList<>();
 	    if (projectPrefix!=null && is("outputGrids"))
 		for (int i=0; i<projectPrefix.length; i++) {
 		    if (Utils.interrupt) return;
@@ -552,7 +549,7 @@ public class Runner {
 			//			if (params.biasIsBayesianPrior)
 			//			    proj.priorDistribution = gs.getGrid(new File(params.biasFile).getName());
 			proj.needLayers = allLayers;
-			proj.doProject(lambdafile, projectPrefix[i], ff.getPath(), is("writeClampGrid") ? ffclamp.getPath() : (String) null);
+			proj.doProject(lambdafile, projectPrefix[i], ff.getPath(), is("writeClampGrid") ? ffclamp.getPath() : null);
 			if (Utils.interrupt) return;
 			projectedGrids.add("<a href = \"" + ff.getName() + "\">The model applied to the environmental layers in " + projectPrefix[i] + "</a>");
 			if (is("pictures") && !isFile) {
@@ -617,7 +614,6 @@ public class Runner {
 	novel.setWhiteNonNovel();
 	novel.go(basefeatures, projdir, outfile);
 	String projname = new File(projdir).getName();
-	String layers = new File(environmentalLayers()).getName();
 	htmlout.println("<br>The following two pictures compare the environmental similarity of variables in " + projname + " to the environmental data used for training the model.  In the first picture (MESS), areas in red have one or more environmental variables outside the range present in the training data, so predictions in those areas should be treated with strong caution.  The second picture (MoD) shows the most dissimilar variable, i.e., the one that is furthest outside its training range.  For details, see Elith et al., Methods in Ecology and Evolution, 2010");
 	GridDimension dim = new LazyGrid(outfile).getDimension();
 	htmlout.println("<br>" + htmlLink(Utils.pngname(outfile), null, dim.getnrows(), dim.getncols()) + "<br>");
@@ -654,9 +650,8 @@ public class Runner {
 	    catch (IOException e) { 
 		Utils.warn2("Error making replicate summary for " + species + ": check maxent.log file for details", "replicateError");
 		//		popupError("Error processing replicated species outputs", e); 
-		Utils.logError("Error processing replicated species outputs", e); 
-		return;
-	    }
+		Utils.logError("Error processing replicated species outputs", e);
+		}
 	}
     }
 
@@ -732,7 +727,9 @@ public class Runner {
 	    try {
 		double val = getJackMean(results.filename(), fields[i], species);
 		results.print(fields[i], val);
-	    } catch (Exception e) {};
+	    } catch (Exception e) {
+	    	// pass
+		}
 	}
 	results.println();
     }
@@ -860,7 +857,7 @@ public class Runner {
 	}
     }
 
-    double[] interpolate(double min, double max, int ni) {
+    static double[] interpolate(double min, double max, int ni) {
 	double[] result = new double[ni];
 	for (int i=0; i<ni; i++)
 	    result[i] = min + i*(max-min)/(ni-1);
@@ -868,12 +865,12 @@ public class Runner {
     }
 
 
-    double[] getDoubleCol(String filename, String field) throws IOException {
+    static double[] getDoubleCol(String filename, String field) throws IOException {
 	return Csv.getDoubleCol(filename, field);
     }
 
-    double[] getDoubleCol(String filename, String field, double start, double end) throws IOException {
-	ArrayList a = new ArrayList();
+    static double[] getDoubleCol(String filename, String field, double start, double end) throws IOException {
+	ArrayList<String> a = new ArrayList<>();
 	a.add(start+"");
 	Csv.getCol(filename, field, a);
 	a.add(end+"");
@@ -919,21 +916,21 @@ public class Runner {
 	    plot.setColors(colors);  // need to reset, as ptplot has static colors
     }
 
-    double[] unionCategories(double[][] indices) {
+    static double[] unionCategories(double[][] indices) {
 	int nr = indices.length;
-	HashSet s = new HashSet();
+	HashSet<Double> s = new HashSet<>();
 	for (int r=0; r<nr; r++)
 	    for (int c=0; c<indices[r].length; c++)
-		s.add(new Double(indices[r][c]));
-	Double[] cats = (Double[]) s.toArray(new Double[0]);
+		s.add(indices[r][c]);
+	Double[] cats = s.toArray(new Double[0]);
 	double[] categories = new double[cats.length];
 	for (int c=0; c<cats.length; c++)
-	    categories[c] = cats[c].doubleValue();
+	    categories[c] = cats[c];
 	Arrays.sort(categories);
 	return categories;
     }
 
-    double[][] interpolateCatValues(double[][] indices, double[][] values, double[] categories) {
+    static double[][] interpolateCatValues(double[][] indices, double[][] values, double[] categories) {
 	int nr = indices.length, nc = categories.length;
 	double[][] result = new double[nc][nr];
 	for (int r=0; r<nr; r++) {
@@ -946,20 +943,20 @@ public class Runner {
 	return result;
     }
 	
-    double[][] interpolateValues(double[][] indices, double[][] values, int ni, double min, double max) {
+    static double[][] interpolateValues(double[][] indices, double[][] values, int ni, double min, double max) {
 	int nr = indices.length;
 	int[] current = new int[nr];
 	double[][] result = new double[ni][nr];
 	for (int i=0; i<ni; i++) {
 	    double x = min + i * (max - min)/(ni-1);
 	    for (int r = 0; r<nr; r++) {
-		for ( ; current[r] < indices[r].length-1; ) {
-		    if ((min<max && indices[r][current[r]] < x) ||
-			(min>max && indices[r][current[r]] > x))
-			current[r]++;
-		    else break;
-		}
-		if (current[r]==0)
+		    while (current[r] < indices[r].length-1) {
+			if ((min<max && indices[r][current[r]] < x) ||
+			    (min>max && indices[r][current[r]] > x))
+			    current[r]++;
+			else break;
+		    }
+		    if (current[r]==0)
 		    result[i][r] = values[r][0];
 		else if (i==ni-1 || current[r] >= indices[r].length)
 		    result[i][r] = values[r][indices[r].length-1];
@@ -1002,7 +999,7 @@ public class Runner {
 			break;
 		    }
 		} else {
-		    if (line.indexOf(", training AUC is") != -1) {
+		    if (line.contains(", training AUC is")) {
 			aucs[i] = Double.parseDouble(line.replaceAll(".*, training AUC is ", "").replaceAll(",.*",""));
 		    }
 		}
@@ -1062,7 +1059,7 @@ public class Runner {
 	}
 	if (projectedGrids.size() > 0)
 	    for (int i=0; i<projectedGrids.size(); i++)
-		htmlputs((String) projectedGrids.get(i));
+		htmlputs(projectedGrids.get(i));
   	htmlputs("<a href = \"" + theSpecies + ".lambdas\">The coefficients of the model</a>");
   	htmlputs("<a href = \"" + theSpecies + "_omission.csv\">The omission and predicted area for varying cumulative and raw thresholds</a>");
   	htmlputs("<a href = \"" + theSpecies + "_samplePredictions.csv\">The prediction strength at the training and (optionally) test presence sites</a>");
@@ -1087,14 +1084,16 @@ public class Runner {
 	htmlputs(".");
 	htmlputs(X.numPoints + " points used to determine the Maxent distribution (background points" + (samplesAddedToFeatures? " and presence points":"") + ").");
 	boolean allcont = true;
-	for (int i=0; i<params.layers.length; i++) 
-	    if (params.layerTypes[i].equals("Categorical")) allcont = false;
+	for (int i=0; i<params.layers.length; i++)
+		if (params.layerTypes[i].equals("Categorical")) {
+			allcont = false;
+			break;
+		}
 	htmlputsn("Environmental layers used" + (allcont ? " (all continuous):" : ":"));
 	for (int i=0; i<params.layers.length; i++)
 	    htmlputsn(" " + params.layers[i] + (params.layerTypes[i].equals("Continuous") ? "" : "(categorical)"));
 	htmlputs();
 	htmlputs("Regularization values: " + regularizationConstants());
-	int numSamples = X.numSamples;
 	htmlputs("Feature types used", res.featureTypes);
 	for (Parameter param: params.allParams())
 	    if (param.changed())
@@ -1204,17 +1203,17 @@ public class Runner {
 	
     }
 
-    boolean hasAllData(Sample s, Feature[] f) {
+    static boolean hasAllData(Sample s, Feature[] f) {
 	for (int j=0; j<f.length; j++)
 	    if (!f[j].hasData(s)) return false;
 	return true;
     }
 	
-    Sample[] withAllData(Feature[] f, Sample[] ss) {
-	ArrayList result = new ArrayList();
+    static Sample[] withAllData(Feature[] f, Sample[] ss) {
+	ArrayList<Sample> result = new ArrayList<Sample>();
 	for (int i=0; i<ss.length; i++)
 	    if (hasAllData(ss[i], f)) result.add(ss[i]);
-	return (Sample[]) result.toArray(new Sample[0]);
+	return result.toArray(new Sample[0]);
     }
 	
     Feature[] featuresWithSamples(Feature[] f, Sample[] ss) {
@@ -1240,7 +1239,7 @@ public class Runner {
 	    for (int j=0; j<f.length; j++) 
 		backgroundHash[i] += rnd[j] * f[j].eval(i);
 	Arrays.sort(backgroundHash);
-	ArrayList samplesToAdda = new ArrayList();
+	ArrayList<Sample> samplesToAdda = new ArrayList<>();
 	for (int i=0; i<ss.length; i++) {
 	    double r = 0.0;
 	    for (int j=0; j<f.length; j++)
@@ -1250,11 +1249,11 @@ public class Runner {
 		samplesToAdda.add(ss[i]);
 	}
 	if (samplesToAdda.size() == 0) return f;
-	Sample[] sss = (Sample[]) samplesToAdda.toArray(new Sample[0]);
+	Sample[] sss = samplesToAdda.toArray(new Sample[0]);
 	for (int j=0; j<f.length; j++) {
-	    ArrayList a = new ArrayList();
+	    ArrayList<Double> a = new ArrayList<>();
 	    for (int i=0; i<sss.length; i++)
-		if (f[j].hasData(sss[i])) a.add(new Double(f[j].eval(sss[i])));
+		if (f[j].hasData(sss[i])) a.add(f[j].eval(sss[i]));
 	    if (a.size()==0) {
 		Utils.warn2("Species " + theSpecies + " missing all data for " + f[j].name + ", skipping", "skippingBecauseNoData");
 		return null;
@@ -1299,8 +1298,8 @@ public class Runner {
 	htmlout.println("<br>");
     }
 
-    Feature[] onlyOneFeature(Feature[] baseFeatures, Feature feature) {
-	ArrayList<Feature> onlya = new ArrayList();
+    static Feature[] onlyOneFeature(Feature[] baseFeatures, Feature feature) {
+	ArrayList<Feature> onlya = new ArrayList<>();
 	onlya.add(feature);
 	for (int i=0; i<baseFeatures.length; i++)
 	    if (!isTrueBaseFeature(baseFeatures[i])) 
@@ -1325,24 +1324,23 @@ public class Runner {
 		createProfiles(lambdas, only, null, raw2cum);
 	    } catch (IOException e) {
 		popupError("Error writing response curve for " + theSpecies + " " + f.name, e);
-		return;
-	    }
+		}
 	}
     }	
 
-    double[] sampleAverages(Feature[] baseFeatures, Sample[] samples, double[][] categories, boolean[] isCategorical) {
+    static double[] sampleAverages(Feature[] baseFeatures, Sample[] samples, double[][] categories, boolean[] isCategorical) {
 	double[] result = new double[baseFeatures.length];
 	for (int i=0; i<baseFeatures.length; i++) {
 	    boolean iscat = baseFeatures[i].type()==Feature.L_CAT;
 	    if (isCategorical!=null) isCategorical[i] = iscat;
 	    if (iscat) {
-		HashSet s = new HashSet();
+		HashSet<Double> s = new HashSet<Double>();
 		for (int j=0; j<baseFeatures[i].n; j++)
-		    s.add(new Double(baseFeatures[i].eval(j)));
-		Double[] cats = (Double[]) s.toArray(new Double[0]);
+		    s.add(baseFeatures[i].eval(j));
+		Double[] cats = s.toArray(new Double[0]);
 		double[] allcats = new double[cats.length];
 		for (int j=0; j<cats.length; j++)
-		    allcats[j] = cats[j].doubleValue();
+		    allcats[j] = cats[j];
 		Arrays.sort(allcats);
 		if (categories!=null)
 		    categories[i] = allcats;
@@ -1392,12 +1390,12 @@ public class Runner {
 	boolean exponent = is("responseCurvesExponent");
 	if (oneVarProfile) samples = new Sample[0];
 	Utils.reportDoing(theSpecies + " response curves");
-	final HashMap map = new HashMap();
+	final HashMap<String, Double> map = new HashMap<>();
 	boolean[] isCategorical = new boolean[baseFeatures.length];
 	double[][] categories = new double[baseFeatures.length][];
 	double[] averages = sampleAverages(baseFeatures, samples, categories, isCategorical);
 	for (int i=0; i<baseFeatures.length; i++)
-	    map.put(baseFeatures[i].name, new Double(averages[i]));
+	    map.put(baseFeatures[i].name, averages[i]);
 
 	//	final Sample sample = new Sample(0,0,0,0,0,"",map);
 	Project proj = new Project(params);
@@ -1453,7 +1451,7 @@ public class Runner {
 	    out.println("<br>");
     }
 
-    static double[][] responsePlotData(Grid projgrid, HashMap map, String var, double min, double max, double[] categories, boolean exponent) {
+    static double[][] responsePlotData(Grid projgrid, HashMap<String, Double> map, String var, double min, double max, double[] categories, boolean exponent) {
 	Object savedMean = map.get(var);
 	double[] x;
 	double minx = min - (max-min)/10, maxx = max + (max-min)/10;
@@ -1467,18 +1465,18 @@ public class Runner {
 		x[j] = minx+j*(maxx-minx)/(num-1);
 	}
 	double[] y = new double[x.length];
-	map.put(var, new Double(categories!=null ? categories[0]-1 // less than all
-				 : minx));
+	map.put(var, categories != null ? categories[0] - 1 // less than all
+		: minx);
 	double zeropoint = projgrid.eval(0,0);
 	for (int j=0; j<x.length; j++) {
-	    map.put(var, new Double(x[j]));
+	    map.put(var, x[j]);
 	    y[j] = projgrid.eval(0,0) - (exponent?zeropoint:0.0);
 	}
 	map.put(var, savedMean);
 	return new double[][] { x, y };
     }
 
-    static void dump(HashMap map) {
+    static void dump(HashMap<?, ?> map) {
 	for (Object o: map.keySet())
 	    System.out.println("Map " + o + ":" + map.get(o));
     }
@@ -1632,8 +1630,6 @@ public class Runner {
 	plot.setTitle("Jackknife of " + what + " for " + theSpecies);
 	plot.setYLabel("Environmental Variable");
 	plot.setXLabel(what);
-	int bestonlyfeature=0, bestomitfeature=0;
-	double bestonlygain = 0.0, bestomitgain = 0.0;
 	int cnt=0;
 	for (int i=0; i<features.length; i++) {
 	    //	    System.out.println(i + " " + features[i].name + " " + gain[i] + " " + gain[num+i]);
@@ -1656,7 +1652,7 @@ public class Runner {
 	}
     }
 
-    String recordTypeName(int t) {
+    static String recordTypeName(int t) {
 	String[] typenames = new String[] { "linear", "quadratic", "product", "threshold", "hinge" };
 	int[] types = new int[] { Feature.LINEAR, Feature.SQUARE, Feature.PRODUCT, Feature.THR_GEN, Feature.HINGE_GEN };
 	for (int i=0; i<types.length; i++)
@@ -1676,7 +1672,7 @@ public class Runner {
 	if (is("autofeature"))
 	    autoSetActive(features, ss.length);
 
-	HashSet<String> types = new HashSet();
+	HashSet<String> types = new HashSet<>();
 
 	for (int j=0; j<features.length; j++) {
 	    int type = features[j].type();
@@ -1780,7 +1776,7 @@ public class Runner {
     }
 
     double[][] writeCumulativeIndex(double[] weights, String raw2cumfile, FeaturedSpace X, double auc, double trainauc, Feature[] baseFeatures, double entropy) throws IOException {
-	double[] origweights = (double[]) weights.clone();
+	double[] origweights = weights.clone();
 	// initialize weights and indices
 	Arrays.sort(weights);
 	    
@@ -1792,13 +1788,13 @@ public class Runner {
 	    if (testvals[i] > 1) testvals[i] = 1;
 	}
 	boolean hastest = (testvals.length > 0);
-	ArrayList a = new ArrayList();
+	ArrayList<Double> a = new ArrayList<Double>();
 	for (int i=0; i<X.numSamples; i++)
 	    if (hasAllData(X.samples[i], baseFeatures))
-		a.add(new Double(X.getDensity(X.samples[i]) / X.densityNormalizer));
+		a.add(X.getDensity(X.samples[i]) / X.densityNormalizer);
 	double[] trainvals = new double[a.size()];
 	for (int i=0; i<trainvals.length; i++) {
-	    trainvals[i] = ((Double) a.get(i)).doubleValue();
+	    trainvals[i] = a.get(i);
 	    if (Double.isNaN(trainvals[i]) || Double.isInfinite(trainvals[i]))
 		trainvals[i] = 1;
 	    if (trainvals[i] > 1) trainvals[i] = 1;
@@ -1862,7 +1858,7 @@ public class Runner {
 	out.println("Raw value,Corresponding cumulative value,Corresponding "+params.occurrenceProbabilityTransform()+" value,Fractional area,Training omission,Test omission");
 	double[] thresh1 = new double[] {.000000001, .0000000025, .00000001, .000000025, .0000001, .00000025, .000001, .0000025, .00001, .000025, .00005, .0001, .00025, .0005, .001, .0025, .005, .01, .025, .05, 0.75, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.75}; // 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5};
 	double[] thresh = new double[thresh1.length + 393];
-	for (int i=0; i<thresh1.length; i++) thresh[i] = thresh1[i];
+	    System.arraycopy(thresh1, 0, thresh, 0, thresh1.length);
 	cnt = thresh1.length;
 	for (int i=8; i<=400; i++) thresh[cnt++] = i/4.0;
 	Arrays.sort(thresh); // just in case
@@ -1878,7 +1874,7 @@ public class Runner {
 	NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 	nf.setGroupingUsed(false);
 	nf.setMaximumFractionDigits(9);
-	ArrayList<Double> rr = new ArrayList(), cc = new ArrayList();
+	ArrayList<Double> rr = new ArrayList<>(), cc = new ArrayList<>();
 	Project proj = new Project(params);
 	for (int i=0; i<sweights.length; i++) {
 	    if (sweights[i] != threshold) {
@@ -1972,11 +1968,11 @@ public class Runner {
 	return null;
     }
 	
-    String quote(String s) {
-	if (s.indexOf(",")==-1) return s;
+    static String quote(String s) {
+	if (!s.contains(",")) return s;
 	return "\"" + s + "\"";
     }
-    String quotedCsv(String[] s) {
+    static String quotedCsv(String[] s) {
 	if (s==null || s.length==0) return "";
 	String result = quote(s[0]);
 	for (int i=1; i<s.length; i++)
@@ -1985,7 +1981,7 @@ public class Runner {
     }
 
     // given: x > raw[i-1], i in range 0..raw.length
-    double interpolate(double x, int i, double[] raw, double[] cum) {
+    static double interpolate(double x, int i, double[] raw, double[] cum) {
 	if (i==-1) {
 	    i = Arrays.binarySearch(raw, x);
 	    if (i>=0) 
@@ -2000,13 +1996,13 @@ public class Runner {
 
 
     // Assumes a is sorted in increasing order
-    double omissionrate(double[] a, double t) {
+    static double omissionrate(double[] a, double t) {
 	for (int i=0; i<a.length; i++)
 	    if (a[i] >= t) return i / (double) a.length;
 	return 1.0;
     }
 
-    class Thresholdinfo {
+    static class Thresholdinfo {
 	String meaning;
 	double threshold=-1, value=1, area=-1, trainomission=-1;
 	double testomission=-1, cumulative=-1, occurrenceProbability = -1;
@@ -2099,7 +2095,7 @@ public class Runner {
 	htmlputs("</table>");
     }
 
-    double exactBinomial(int success, int n, double p) { // one-sided
+    static double exactBinomial(int success, int n, double p) { // one-sided
 	double prob = 0.0;
 	for (int i=success; i<=n; i++) {
 	    long fac = 1;
@@ -2111,7 +2107,7 @@ public class Runner {
 	return prob;
     }
 
-    double binomial(int n, double p, double successrate) {
+    static double binomial(int n, double p, double successrate) {
 	double mean = n*p, sd = Math.sqrt(n*p*(1-p));
 	if (sd==0) return (n > 0 && (p!=successrate)) ? 0 : 1;
 	double z = (n*successrate - mean) / sd;
@@ -2119,7 +2115,7 @@ public class Runner {
     }
     // from http://www.jstatsoft.org/v11/i04/v11i04.pdf
     // saved in Papers/Density/otherspapers/calculatingNormalDistribution.pdf
-    double cPhi(double x) {
+    static double cPhi(double x) {
 	int i,j=(int) (.5*(Math.abs(x)+1)); 
 	double R[] = new double[]
 	    {1.25331413731550025, .421369229288054473, .236652382913560671,
@@ -2135,17 +2131,17 @@ public class Runner {
 		s=(t=s)+pwr*(a+h*b);
 	    }
 	s=s*Math.exp(-.5*x*x-.91893853320467274178);
-	if(x>=0) return (double) s; 
-	return (double) (1.-s);
+	if(x>=0) return s;
+	return 1.-s;
     }
 
     Feature[] makeFeatures(Feature[] f1) {
 	return makeFeatures(f1, is("cacheFeatures"), true);
     }
-    Feature[] makeFeatures(Feature[] f1, boolean doCache, boolean doReport) { 
-	int i, j, cnt=0, len=f1.length;
-	ArrayList<Feature> features = new ArrayList();
-	ArrayList contList = new ArrayList();
+    Feature[] makeFeatures(Feature[] f1, boolean doCache, boolean doReport) {
+	int i, j, len=f1.length;
+	ArrayList<Feature> features = new ArrayList<>();
+	ArrayList<Feature> contList = new ArrayList<>();
 	if (doReport)
 	    Utils.reportDoing("Making features");
 	String[] names = new String[len];
@@ -2171,7 +2167,7 @@ public class Runner {
 	    default:
 		Utils.fatalException("makeFeatures: Cannot process feature of type "+types[i], null);
 	    }
-	Feature[] cont = (Feature[]) contList.toArray(new Feature[0]);
+	Feature[] cont = contList.toArray(new Feature[0]);
 	//	if (is("linear"))   // always added, as needed for clamping
 	for (i=0; i<cont.length; i++)
 	    features.add(new LinearFeature(cont[i], cont[i].name)); 
@@ -2225,7 +2221,7 @@ public class Runner {
 	    };
     }
 
-    Feature naturallyClamped(Feature f, String s) {
+    static Feature naturallyClamped(Feature f, String s) {
 	double min=f.eval(0), max=f.eval(0);
 	for (int i=1; i<f.n; i++) {
 	    double val=f.eval(i);
